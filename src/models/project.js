@@ -125,15 +125,16 @@ export class Project {
       balance: 0,
       categoryBreakdown: {},
       transactions: [],
-      splitDetails: []
+      splitDetails: [],
+      participatedTransactions: []
     };
 
     // 計算該成員支付的總額和各類別消費
     this.transactions.forEach(transaction => {
       // 記錄所有相關交易
       if (transaction.payer === member.name) {
-        stats.transactions.push(transaction);
-        stats.totalPaid += parseFloat(transaction.amount);
+        stats.transactions.push(transaction)
+        stats.totalPaid += parseFloat(transaction.amount)
 
         // 更新類別明細
         if (!stats.categoryBreakdown[transaction.category]) {
@@ -141,55 +142,88 @@ export class Project {
         }
         stats.categoryBreakdown[transaction.category] += parseFloat(transaction.amount);
       }
-    });
+
+      // 記錄該成員參與的所有交易
+      if (transaction.participants.includes(memberId)) {
+        stats.participatedTransactions.push(transaction)
+
+        // 計算該成員在此交易中應付的金額 (平均分配)
+        const perPersonExpense = parseFloat(transaction.amount) / transaction.participants.length
+        stats.shouldPay += perPersonExpense
+      }
+    })
 
     // 計算項目總花費和人均花費
-    const totalProjectExpense = this.transactions.reduce((sum, t) => sum + parseFloat(t.amount), 0);
-    const perPersonExpense = this.members.length > 0 ? totalProjectExpense / this.members.length : 0;
+    // const totalProjectExpense = this.transactions.reduce((sum, t) => sum + parseFloat(t.amount), 0);
+    // const perPersonExpense = this.members.length > 0 ? totalProjectExpense / this.members.length : 0;
 
     // 設置應付金額和餘額
-    stats.shouldPay = perPersonExpense;
+    // stats.shouldPay = perPersonExpense;
+    // stats.balance = stats.totalPaid - stats.shouldPay
+
+    // 計算分帳詳細資訊
+    // stats.splitDetails = this.calculateSplitDetails()
+
+    // 設置餘額
     stats.balance = stats.totalPaid - stats.shouldPay;
 
     // 計算分帳詳細資訊
     stats.splitDetails = this.calculateSplitDetails();
 
-    return stats;
+    return stats
   }
 
   calculateAllMemberStats() {
-    // 計算總支出
-    const totalExpense = this.transactions.reduce((sum, t) => sum + parseFloat(t.amount), 0);
-
-    // 計算每個人應付的平均金額
-    const avgExpense = this.members.length > 0 ? totalExpense / this.members.length : 0;
-
-    // 計算每個成員的支出和餘額
+    // 初始化每個成員的統計資料
     const membersStats = {};
     this.members.forEach(member => {
-      // 該成員實際支付的金額
-      const paid = this.transactions
-        .filter(t => t.payer === member.name)
-        .reduce((sum, t) => sum + parseFloat(t.amount), 0);
-
-      // 計算餘額 (正值表示應收，負值表示應付)
-      const balance = paid - avgExpense;
-
       membersStats[member.id] = {
         id: member.id,
         name: member.name,
         avatar: member.avatar,
-        paid,
-        shouldPay: avgExpense,
-        balance
+        paid: 0,
+        shouldPay: 0,
+        balance: 0,
+        participatedTransactions: [] // 成員參與的交易列表
       };
     });
 
+    // 計算每個交易的分攤
+    this.transactions.forEach(transaction => {
+      const amount = parseFloat(transaction.amount)
+      const payer = this.members.find(m => m.name === transaction.payer)
+
+      if (payer) {
+        membersStats[payer.id].paid += amount
+      }
+
+      // 計算參與者應付金額
+      const participants = transaction.participants.length > 0
+        ? transaction.participants
+        : this.members.map(m => m.id); // 如果沒有指定參與者，則所有成員平分
+
+      const perPersonExpense = amount / participants.length;
+
+      participants.forEach(participantId => {
+        if (membersStats[participantId]) {
+          membersStats[participantId].shouldPay += perPersonExpense;
+          membersStats[participantId].participatedTransactions.push(transaction.id);
+        }
+      });
+    });
+
+    // 計算每個成員的餘額
+    for (const id in membersStats) {
+      membersStats[id].balance = membersStats[id].paid - membersStats[id].shouldPay;
+    }
+
+    // 計算總支出
+    const totalExpense = this.transactions.reduce((sum, t) => sum + parseFloat(t.amount), 0);
+
     return {
       totalExpense,
-      avgExpense,
       membersStats
-    };
+    }
   }
 
   calculateSplitDetails() {

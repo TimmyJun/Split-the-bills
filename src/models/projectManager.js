@@ -23,6 +23,18 @@ export class ProjectManager {
           // 針對舊數據，如果沒有創建日期，則使用最後更新時間
           project.createdDate = new Date(p.lastUpdated)
         }
+
+        if (project.transactions) {
+          project.transactions.forEach(transaction => {
+            if (!transaction.participants) {
+              transaction.participants = []
+            }
+            if (!transaction.paidMembers) {
+              transaction.paidMembers = []
+            }
+          })
+        }
+        
         return project
       })
       this.currentProject = this.getMostRecentProject()

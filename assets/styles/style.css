@@ -288,6 +288,18 @@ body {
   border-radius: 50%;
 }
 
+.transactions-section .add-expense-group {
+  position: relative;
+}
+
+.transactions-section .add-expense-group .add-btn {
+  grid-column: 1 / -1;
+  width: 100%;
+  max-width: 200px;
+  margin: 10px auto 0 auto;
+  display: block;
+}
+
 @media (max-width: 840px) {
   .container {
     padding: 15px;

@@ -217,6 +217,9 @@ export class AppController {
       // Update payer select options
       this.transactionListView.updatePayerSelect(project.members)
 
+      // 更新參與成員選擇區域
+      this.transactionListView.updateParticipantsSelection(project.members)
+
       // update category selector
       this.transactionListView.updateCategorySelect(project.categories)
 
@@ -425,7 +428,8 @@ export class AppController {
       formData.date,
       formData.amount,
       payer.name,
-      formData.category
+      formData.category,
+      formData.participants
     )
 
     // 添加到項目
@@ -494,8 +498,8 @@ export class AppController {
   }
 
   handleSaveTransaction(data) {
-    const currentProject = this.projectManager.currentProject;
-    if (!currentProject) return;
+    const currentProject = this.projectManager.currentProject
+    if (!currentProject) return
 
     // 找到要編輯的交易
     const transaction = currentProject.transactions.find(t => t.id === data.id);
@@ -517,11 +521,12 @@ export class AppController {
     }
 
     // 更新交易數據
-    transaction.title = data.title;
-    transaction.date = data.date;
-    transaction.amount = data.amount;
-    transaction.payer = payer.name;
-    transaction.category = data.category;
+    transaction.title = data.title
+    transaction.date = data.date
+    transaction.amount = data.amount
+    transaction.payer = payer.name
+    transaction.category = data.category
+    transaction.participants = data.participants || []
 
     // 保存項目變更
     this.projectManager.saveProjects();
