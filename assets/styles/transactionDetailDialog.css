@@ -113,6 +113,7 @@
 .transaction-detail-dialog .participant-payment-item.payer {
   background-color: rgba(103, 58, 183, 0.1);
   border-left: 3px solid #673AB7;
+  width: 100%;
 }
 
 .transaction-detail-dialog .participant-info {
@@ -182,6 +183,31 @@
   color: #999;
   padding: 20px 0;
   font-style: italic;
+}
+
+.external-payer {
+  background-color: rgba(220, 220, 255, 0.3);
+  border-left: 4px solid #7C3AED;
+  margin-bottom: 12px;
+}
+
+.payment-type .shared-expense {
+  color: #4CAF50;
+  font-weight: bold;
+}
+
+.payment-type .paid-for-others {
+  color: #7C3AED;
+  font-weight: bold;
+}
+
+.payer-badge {
+  background-color: #7C3AED;
+  color: white;
+  font-size: 0.7rem;
+  padding: 2px 6px;
+  border-radius: 10px;
+  margin-left: 6px;
 }
 
 /* 響應式設計 */

@@ -169,11 +169,17 @@ body {
 .expense-row {
   display: flex;
   align-items: center;
-  padding: 5px;
+  padding: 10px;
   background-color: #EDE9FE;
   border-radius: 6px;
   margin-bottom: 10px;
   gap: 10px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.expense-row:hover {
+  background-color: rgba(124, 58, 237, 0.05);
 }
 
 .expense-edit-form {

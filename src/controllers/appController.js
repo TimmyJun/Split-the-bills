@@ -77,6 +77,7 @@ export class AppController {
       .on('transaction-edit-requested', data => this.handleEditTransaction(data.id))
       .on('transaction-save-requested', data => this.handleSaveTransaction(data))
       .on('transaction-edit-cancelled', data => this.handleCancelEdit(data.id))
+      .on('transaction-detail-requested', data => this.showTransactionDetail(data.id))
 
     // 交易詳情對話框事件
     this.transactionDetailDialog
@@ -127,7 +128,21 @@ export class AppController {
     }
 
     // 切換付款狀態
-    const isPaid = transaction.togglePaymentStatus(memberId)
+    let isPaid = false
+
+    // 檢查成員是否已經付款
+    if (transaction.paidMembers && transaction.paidMembers.includes(memberId)) {
+      // 如果已經付款，則移除
+      transaction.paidMembers = transaction.paidMembers.filter(id => id !== memberId)
+      isPaid = false
+    } else {
+      // 如果尚未付款，則添加
+      if (!transaction.paidMembers) {
+        transaction.paidMembers = []
+      }
+      transaction.paidMembers.push(memberId)
+      isPaid = true
+    }
 
     // 更新對話框中的顯示
     this.transactionDetailDialog.updateMemberPaymentStatus(memberId, isPaid)

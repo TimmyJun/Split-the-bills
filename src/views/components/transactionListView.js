@@ -105,13 +105,21 @@ export class TransactionListView {
     const paidMembers = transaction.paidMembers || []
 
     const participantsCount = transaction.participants.length || members.length
-    const paidCount = paidMembers.length + 1
+
+    // 需要支付的成員數量 (不包括付款人)
+    const needToPayCount = participants.includes(member ? member.id : '')
+      ? participantsCount - 1  // 付款人在參與者列表中，減去1
+      : participantsCount      // 付款人不在參與者列表中
+
+    // 已支付的成員數量
+    const paidCount = paidMembers.length
+
+    // 計算支付進度百分比
+    const progressPercentage = needToPayCount > 0 ? Math.round((paidCount / needToPayCount) * 100) : 100
 
     const participantsInfo = participantsCount === members.length
       ? 'All members'
       : `${participantsCount} participant${participantsCount > 1 ? 's' : ''}`
-
-    const progressPercentage = Math.round((paidCount / participantsCount) * 100)
 
     const paymentStatusClass = progressPercentage === 100
       ? 'payment-status-complete'
@@ -119,9 +127,11 @@ export class TransactionListView {
         ? 'payment-status-progress'
         : 'payment-status-pending'
 
+    const paymentProgressText = needToPayCount > 0 ? `${paidCount}/${needToPayCount}` : '0/0'
+
     return `
-    <div class="expense-row ${paymentStatusClass}" data-transaction-id="${transaction.id}">
-      <div class="expense-info">
+      <div class="expense-row ${paymentStatusClass}" data-transaction-id="${transaction.id}">
+        <div class="expense-info">
         <div class="avatar">${avatar}</div>
         <span class="payer">${transaction.payer}</span>
         <div class="expense-content">
@@ -134,15 +144,15 @@ export class TransactionListView {
       </div>
       <div class="payment-progress-container">
         <div class="payment-progress-bar" style="width: ${progressPercentage}%"></div>
-        <span class="payment-progress-text">${paidCount}/${participantsCount}</span>
+        <span class="payment-progress-text">${paymentProgressText}</span>
       </div>
       <span class="amount">$${transaction.amount}</span>
       <div class="expense-actions">
-        <button class="btn edit-btn">edit</button>
-        <button class="btn remove-btn">remove</button>
+        <button class="btn edit-btn">Edit</button>
+        <button class="btn remove-btn">Remove</button>
       </div>
     </div>
-  `;
+    `;
   }
 
   // 更新成員選擇器
@@ -409,7 +419,7 @@ export class TransactionListView {
       avatar.style.backgroundColor = 'rgba(124, 58, 237, 0.1)'
 
       const name = document.createTextNode(member.name)
-      
+
 
       label.appendChild(avatar)
       label.appendChild(name)
