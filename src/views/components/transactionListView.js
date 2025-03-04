@@ -22,15 +22,21 @@ export class TransactionListView {
   initEventListeners() {
     // 交易列表事件委派處理
     this.container.addEventListener('click', (e) => {
-      const expenseRow = e.target.closest('.expense-row');
-      if (!expenseRow) return;
+      const expenseRow = e.target.closest('.expense-row')
+      if (!expenseRow) return
 
-      const transactionId = expenseRow.dataset.transactionId;
+      const transactionId = expenseRow.dataset.transactionId
 
       if (e.target.classList.contains('remove-btn')) {
-        this.emit('transaction-remove-requested', { id: transactionId });
+        this.emit('transaction-remove-requested', { id: transactionId })
+        return
       } else if (e.target.classList.contains('edit-btn')) {
-        this.emit('transaction-edit-requested', { id: transactionId });
+        this.emit('transaction-edit-requested', { id: transactionId })
+        return
+      }
+
+      if (!e.target.closest('.expense-actions')) {
+        this.emit('transaction-detail-requested', { id: transactionId });
       }
     });
 
@@ -95,14 +101,26 @@ export class TransactionListView {
     const avatar = member ? (member.avatar || "😊") : "😊"
     const category = transaction.category || "Miscellaneous"
 
-    // const participants = transaction.participants || []
+    const participants = transaction.participants || []
+    const paidMembers = transaction.paidMembers || []
+
     const participantsCount = transaction.participants.length || members.length
+    const paidCount = paidMembers.length + 1
+
     const participantsInfo = participantsCount === members.length
       ? 'All members'
       : `${participantsCount} participant${participantsCount > 1 ? 's' : ''}`
 
+    const progressPercentage = Math.round((paidCount / participantsCount) * 100)
+
+    const paymentStatusClass = progressPercentage === 100
+      ? 'payment-status-complete'
+      : progressPercentage > 50
+        ? 'payment-status-progress'
+        : 'payment-status-pending'
+
     return `
-    <div class="expense-row" data-transaction-id="${transaction.id}">
+    <div class="expense-row ${paymentStatusClass}" data-transaction-id="${transaction.id}">
       <div class="expense-info">
         <div class="avatar">${avatar}</div>
         <span class="payer">${transaction.payer}</span>
@@ -113,6 +131,10 @@ export class TransactionListView {
           <span class="transaction-date">${transaction.date}</span>
           <span class="transaction-participants">${participantsInfo}</span>
         </div>
+      </div>
+      <div class="payment-progress-container">
+        <div class="payment-progress-bar" style="width: ${progressPercentage}%"></div>
+        <span class="payment-progress-text">${paidCount}/${participantsCount}</span>
       </div>
       <span class="amount">$${transaction.amount}</span>
       <div class="expense-actions">
@@ -186,15 +208,17 @@ export class TransactionListView {
     const categorySelect = document.querySelector('.transactions-section .category-select')
     const customCategoryInput = document.querySelector('.transactions-section .custom-category')
     const payerSelect = document.querySelector('.transactions-section .payer-select')
-    const participantCheckboxes = document.querySelectorAll('.transactions-section .participant-checkbox:checked')
+    const participantCheckboxes = document.querySelectorAll('.transactions-section .participant-checkbox:checked') || []
 
     // 重置所有錯誤狀態
     [titleInput, dateInput, amountInput, categorySelect, customCategoryInput, payerSelect].forEach(input => {
-      if (input) input.classList.remove('error');
-    });
+      if (input) {
+        input.classList.remove('error')
+      }
+    })
 
     let valid = true;
-    let errorMessage = '';
+    let errorMessage = ''
 
     // 驗證標題
     if (!titleInput.value.trim()) {
@@ -239,10 +263,11 @@ export class TransactionListView {
     }
 
     // 驗證至少選擇了一個參與成員
-    if (participantCheckboxes.length === 0) {
-      document.querySelector('.participants-container').classList.add('error');
-      valid = false;
-      errorMessage = errorMessage || 'Please select at least one participant';
+    const participantsContainer = document.querySelector('.participants-container')
+    if (!participantCheckboxes || participantCheckboxes.length === 0) {
+      if (participantsContainer) participantsContainer.classList.add('error')
+      valid = false
+      errorMessage = errorMessage || 'Please select at least one participant'
     }
 
     if (!valid) {

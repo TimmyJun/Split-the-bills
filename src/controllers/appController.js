@@ -8,6 +8,7 @@ import { Transaction } from "../models/transaction.js"
 import { MemberDetailDialog } from "../views/components/memberDetailDialog.js"
 import { ChartView } from "../views/components/chartView.js"
 import { ProjectStatusView } from "../views/components/projectStatusView.js"
+import { TransactionDetailDialog } from "../views/components/transactionDetailDialog.js"
 
 export class AppController {
   constructor() {
@@ -18,6 +19,7 @@ export class AppController {
     this.emojiPickerView = new EmojiPickerView()
     this.transactionListView = new TransactionListView(document.querySelector('.expense-list'))
     this.memberDetailDialog = new MemberDetailDialog()
+    this.transactionDetailDialog = new TransactionDetailDialog()
     this.chartView = new ChartView(document.querySelector('.chart-placeholder'))
     this.currentChartType = 'category'
     this.projectStatusView = new ProjectStatusView()
@@ -76,6 +78,10 @@ export class AppController {
       .on('transaction-save-requested', data => this.handleSaveTransaction(data))
       .on('transaction-edit-cancelled', data => this.handleCancelEdit(data.id))
 
+    // 交易詳情對話框事件
+    this.transactionDetailDialog
+      .on('payment-toggle-requested', data => this.handlePaymentToggle(data.transactionId, data.memberId))
+
     this.projectStatusView
       .on('status-change-requested', data => this.handleProjectStatusChange(data.status))
     
@@ -94,6 +100,43 @@ export class AppController {
 
     // 顯示成員詳情對話框
     this.memberDetailDialog.showMemberDetail(member, memberStats)
+  }
+
+  showTransactionDetail(transactionId) {
+    const currentProject = this.projectManager.currentProject
+    if (!currentProject) return
+
+    const transaction = currentProject.transactions.find(t => t.id === transactionId)
+    if (!transaction) {
+      console.error('Transaction not found:', transactionId)
+      return
+    }
+
+    // 顯示交易詳情對話框
+    this.transactionDetailDialog.showTransactionDetail(transaction, currentProject.members)
+  }
+
+  handlePaymentToggle(transactionId, memberId) {
+    const currentProject = this.projectManager.currentProject
+    if (!currentProject) return
+
+    const transaction = currentProject.transactions.find(t => t.id === transactionId)
+    if (!transaction) {
+      console.error('Transaction not found:', transactionId)
+      return
+    }
+
+    // 切換付款狀態
+    const isPaid = transaction.togglePaymentStatus(memberId)
+
+    // 更新對話框中的顯示
+    this.transactionDetailDialog.updateMemberPaymentStatus(memberId, isPaid)
+
+    // 保存專案變更
+    this.projectManager.saveProjects()
+
+    // 更新 UI (重新渲染交易列表以顯示更新後的付款狀態)
+    this.updateUI()
   }
 
   showNewProjectDialog() {
@@ -422,6 +465,7 @@ export class AppController {
     }
 
     // 創建新交易
+    const paidMembers = [formData.payerId]
     const transaction = new Transaction(
       Date.now().toString(),
       formData.title,
@@ -429,7 +473,8 @@ export class AppController {
       formData.amount,
       payer.name,
       formData.category,
-      formData.participants
+      formData.participants,
+      paidMembers
     )
 
     // 添加到項目

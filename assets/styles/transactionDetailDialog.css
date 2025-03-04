@@ -1,0 +1,244 @@
+.transaction-detail-dialog {
+  width: 90%;
+  max-width: 600px;
+  padding: 0;
+  border-radius: 8px;
+  border: none;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  max-height: 90vh;
+  overflow-y: auto;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  margin: 0;
+}
+
+.transaction-detail-dialog::backdrop {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.transaction-detail-dialog .dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  border-bottom: 1px solid #eee;
+  background-color: #f7f7f7;
+}
+
+.transaction-detail-dialog .transaction-detail-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.transaction-detail-dialog .avatar {
+  font-size: 1.5rem;
+}
+
+.transaction-detail-dialog .close-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #666;
+}
+
+.transaction-detail-dialog .transaction-info-summary {
+  display: flex;
+  justify-content: space-around;
+  padding: 20px 16px;
+  background-color: #f9f9f9;
+  border-bottom: 1px solid #eee;
+}
+
+.transaction-detail-dialog .info-item {
+  text-align: center;
+  flex: 1;
+}
+
+.transaction-detail-dialog .info-label {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 5px;
+}
+
+.transaction-detail-dialog .info-value {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.transaction-detail-dialog .participants-payment-section {
+  padding: 16px;
+  border-bottom: 1px solid #eee;
+}
+
+.transaction-detail-dialog .section-title {
+  font-size: 1.1rem;
+  margin-top: 0;
+  margin-bottom: 8px;
+  color: #333;
+}
+
+.transaction-detail-dialog .section-description {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 16px;
+}
+
+.transaction-detail-dialog .participants-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.transaction-detail-dialog .participant-payment-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  border-radius: 6px;
+  background-color: #f5f5f5;
+  transition: background-color 0.3s;
+}
+
+.transaction-detail-dialog .participant-payment-item.paid {
+  background-color: rgba(76, 175, 80, 0.1);
+  border-left: 3px solid #4CAF50;
+}
+
+.transaction-detail-dialog .participant-payment-item.payer {
+  background-color: rgba(103, 58, 183, 0.1);
+  border-left: 3px solid #673AB7;
+}
+
+.transaction-detail-dialog .participant-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.transaction-detail-dialog .payment-status {
+  display: flex;
+  align-items: center;
+}
+
+.transaction-detail-dialog .payment-toggle-btn {
+  padding: 4px 12px;
+  font-size: 13px;
+}
+
+.transaction-detail-dialog .payment-toggle-btn.confirmed {
+  background-color: #4CAF50;
+}
+
+.transaction-detail-dialog .payment-toggle-btn.unconfirmed {
+  background-color: #9E9E9E;
+}
+
+.transaction-detail-dialog .payer-badge {
+  background-color: #673AB7;
+  color: white;
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 10px;
+  margin-left: 8px;
+}
+
+.transaction-detail-dialog .status-text {
+  font-size: 0.9rem;
+  color: #673AB7;
+  font-style: italic;
+}
+
+.transaction-detail-dialog .payment-summary {
+  padding: 16px;
+  background-color: #f9f9f9;
+  border-top: 1px solid #eee;
+}
+
+.transaction-detail-dialog .summary-item {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+
+.transaction-detail-dialog .summary-label {
+  font-weight: bold;
+  color: #333;
+}
+
+.transaction-detail-dialog .summary-value {
+  color: #4CAF50;
+  font-weight: bold;
+}
+
+.transaction-detail-dialog .no-data {
+  text-align: center;
+  color: #999;
+  padding: 20px 0;
+  font-style: italic;
+}
+
+/* 響應式設計 */
+@media (max-width: 768px) {
+  .transaction-detail-dialog {
+    width: 95%;
+  }
+
+  .transaction-detail-dialog .transaction-info-summary {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .transaction-detail-dialog .info-item {
+    min-width: 100px;
+  }
+}
+
+@media (max-width: 576px) {
+  .transaction-detail-dialog {
+    width: 100%;
+    max-height: 100vh;
+    border-radius: 0;
+  }
+
+  .transaction-detail-dialog .participant-payment-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .transaction-detail-dialog .payment-status {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .transaction-detail-dialog .payment-toggle-btn {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+/* 滾動條美化 */
+.transaction-detail-dialog::-webkit-scrollbar {
+  width: 8px;
+}
+
+.transaction-detail-dialog::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.transaction-detail-dialog::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 4px;
+}
+
+.transaction-detail-dialog::-webkit-scrollbar-thumb:hover {
+  background: #bbb;
+}
