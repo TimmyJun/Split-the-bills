@@ -1,0 +1,253 @@
+.chart-controls {
+  margin-bottom: 15px;
+  display: flex;
+  justify-content: flex-end;
+  position: relative;
+  z-index: 10;
+}
+
+.chart-type-select {
+  max-width: 200px;
+}
+
+/* 圖表容器樣式 */
+.chart-wrapper {
+  aspect-ratio: 1;
+  max-width: 400px;
+  margin: 20px auto;
+  position: relative;
+}
+
+.chart-placeholder {
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 無數據提示 */
+.no-data-message {
+  color: #6B7280;
+  font-style: italic;
+  text-align: center;
+  padding: 20px;
+}
+
+/* 結算摘要樣式 */
+.settlement-summary {
+  width: 100%;
+  padding: 10px;
+  position: relative;
+  z-index: 1;
+}
+
+.settlement-title {
+  color: #5B21B6;
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.settlement-item {
+  display: flex;
+  flex-direction: column;
+  background-color: #EDE9FE;
+  border-radius: 6px;
+  padding: 12px;
+  margin-bottom: 10px;
+}
+
+.settlement-avatars {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
+}
+
+.settlement-avatars .avatar {
+  font-size: 20px;
+}
+
+.settlement-avatars .arrow {
+  margin: 0 10px;
+  color: #6D28D9;
+  font-weight: bold;
+}
+
+.settlement-names {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+.from-name {
+  font-weight: 500;
+}
+
+.to-name {
+  color: #6D28D9;
+  font-size: 14px;
+}
+
+.settlement-amount {
+  font-weight: bold;
+  color: #1F2937;
+  text-align: center;
+  font-size: 18px;
+  margin-top: 5px;
+  padding-top: 5px;
+  border-top: 1px solid rgba(124, 58, 237, 0.1);
+}
+
+@media (max-width: 576px) {
+  .chart-wrapper {
+    max-width: 100%;
+    aspect-ratio: auto;
+    /* 移除固定比例，適應內容高度 */
+    margin: 10px auto;
+  }
+
+  .chart-controls {
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 10px;
+  }
+
+  .chart-type-select {
+    max-width: 100%;
+    width: 100%;
+    margin-bottom: 8px;
+    font-size: 14px;
+    padding: 6px 8px;
+  }
+
+  .settlement-title {
+    font-size: 14px;
+    margin: 5px 0 10px 0;
+  }
+
+  .settlement-summary {
+    padding: 5px 2px;
+  }
+
+  .settlement-item {
+    padding: 8px;
+    margin-bottom: 8px;
+    border-radius: 5px;
+  }
+
+  .settlement-avatars {
+    margin-bottom: 6px;
+  }
+
+  .settlement-avatars .avatar {
+    font-size: 16px;
+  }
+
+  .settlement-avatars .arrow {
+    font-size: 14px;
+    margin: 0 8px;
+  }
+
+  .settlement-names {
+    margin-bottom: 5px;
+  }
+
+  .from-name {
+    font-size: 14px;
+  }
+
+  .to-name {
+    font-size: 12px;
+  }
+
+  .settlement-amount {
+    font-size: 16px;
+    padding-top: 3px;
+    margin-top: 3px;
+  }
+}
+
+/* 超小螢幕設備 (440px 及以下) */
+@media (max-width: 440px) {
+  .chart-wrapper {
+    margin: 5px auto;
+  }
+
+  .settlement-title {
+    font-size: 12px;
+    margin: 5px 0 8px 0;
+  }
+
+  .settlement-item {
+    padding: 6px;
+    margin-bottom: 6px;
+  }
+
+  .settlement-avatars {
+    margin-bottom: 4px;
+  }
+
+  .settlement-avatars .avatar {
+    font-size: 15px;
+  }
+
+  .settlement-avatars .arrow {
+    font-size: 12px;
+    margin: 0 6px;
+  }
+
+  .from-name {
+    font-size: 13px;
+    margin-bottom: 2px;
+  }
+
+  .to-name {
+    font-size: 11px;
+  }
+
+  .settlement-amount {
+    font-size: 15px;
+    margin-top: 2px;
+  }
+}
+
+/* 超小螢幕設備 (375px 及以下) */
+@media (max-width: 375px) {
+  .settlement-title {
+    font-size: 11px;
+  }
+
+  .settlement-item {
+    padding: 5px;
+    margin-bottom: 5px;
+  }
+
+  .settlement-avatars .avatar {
+    font-size: 14px;
+  }
+
+  .settlement-avatars .arrow {
+    margin: 0 4px;
+    font-size: 11px;
+  }
+
+  .from-name {
+    font-size: 12px;
+  }
+
+  .to-name {
+    font-size: 10px;
+  }
+
+  .settlement-amount {
+    font-size: 14px;
+    padding-top: 2px;
+  }
+}

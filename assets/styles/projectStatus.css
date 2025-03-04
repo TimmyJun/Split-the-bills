@@ -1,0 +1,23 @@
+.project-badge {
+  background-color: #9CA3AF;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  margin-left: 10px;
+  user-select: none;
+}
+
+.project-badge.status-active {
+  background-color: #5cde1d;
+}
+
+.project-badge.status-closed {
+  background-color: #9CA3AF;
+}
+
+.project-closed .member-row,
+.project-closed .expense-row {
+  opacity: 0.8;
+}

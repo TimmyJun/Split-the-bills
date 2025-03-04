@@ -1,0 +1,553 @@
+/* Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Base */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background-color: #F5F3FF;
+  color: #1F2937;
+  line-height: 1.5;
+}
+
+/* Layout */
+.app-wrapper {
+  min-height: 100vh;
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Common Components */
+.card {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.btn {
+  background-color: #7C3AED;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  padding: 6px 12px;
+  font-size: 14px;
+}
+
+.btn:hover {
+  background-color: #6D28D9;
+}
+
+.input-field {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #A78BFA;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.input-field:focus {
+  outline: none;
+  border-color: #7C3AED;
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+}
+
+.input-field.error {
+  border-color: #DC2626;
+  background-color: #FEF2F2;
+}
+
+.input-field.error:focus {
+  border-color: #DC2626;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+}
+
+/* Header */
+.main-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.app-title {
+  color: #5B21B6;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+/* project section */
+.project-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.project-title {
+  color: #5B21B6;
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0;
+  flex-grow: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.project-badge {
+  background-color: #5cde1d;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  margin-left: 10px;
+}
+
+.project-info {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.info-label {
+  font-size: 12px;
+  color: #6D28D9;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.info-value {
+  font-size: 14px;
+  color: #4B5563;
+}
+
+.project-description {
+  grid-column: span 2;
+  font-style: italic;
+}
+
+/* Members Area */
+.section-title {
+  color: #5B21B6;
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+
+.member-list {
+  list-style: none;
+  margin-bottom: 30px;
+}
+
+.add-member-group {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+/* transactions */
+.expense-list {
+  margin-bottom: 20px;
+}
+
+.expense-row {
+  display: flex;
+  align-items: center;
+  padding: 5px;
+  background-color: #EDE9FE;
+  border-radius: 6px;
+  margin-bottom: 10px;
+  gap: 10px;
+}
+
+.expense-edit-form {
+  background-color: #F3E8FF;
+  border-radius: 6px;
+  margin-bottom: 10px;
+  padding: 15px;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 10px;
+  box-shadow: 0 0 0 2px #A78BFA;
+}
+
+.edit-custom-category-container {
+  grid-column: 1 / -1;
+  margin-bottom: 10px;
+}
+
+.edit-payer {
+  grid-column: 1 / 3;
+}
+
+.edit-actions {
+  grid-column: 3 / -1;
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.expense-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  flex: 1;
+}
+
+.expense-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.expense-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: auto;
+}
+
+.payer,
+.expense-name,
+.transaction-date {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.payer {
+  width: 100px;
+  /* 基礎寬度 */
+  flex-shrink: 0;
+  /* 不要縮小 */
+}
+
+.expense-name {
+  font-size: 16px;
+}
+
+.transaction-date {
+  font-size: 14px;
+  color: #6D28D9;
+}
+
+.add-expense-group {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr 1fr auto;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.transaction-category {
+  display: inline-block;
+  background-color: #A78BFA;
+  color: white;
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 10px;
+  margin-left: 5px;
+}
+
+.custom-category-container {
+  grid-column: 1 / -1;
+  /* 跨越所有欄位 */
+  margin-top: 5px;
+}
+
+/* Chart Area */
+.chart-wrapper {
+  aspect-ratio: 1;
+  max-width: 400px;
+  margin: 20px auto;
+}
+
+.chart-placeholder {
+  width: 100%;
+  height: 100%;
+  background-color: #EDE9FE;
+  border-radius: 50%;
+}
+
+@media (max-width: 840px) {
+  .container {
+    padding: 15px;
+  }
+}
+
+/* 平板設備 (768px 及以下) */
+@media (max-width: 768px) {
+  .container {
+    max-width: 100%;
+    padding: 15px;
+  }
+
+  .card {
+    padding: 15px;
+  }
+
+  .chart-wrapper {
+    max-width: 320px;
+  }
+
+  .add-expense-group {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .custom-category-container {
+    grid-column: 1 / 3;
+  }
+
+  .expense-edit-form {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .edit-payer {
+    grid-column: 1 / 3;
+  }
+
+  .edit-actions {
+    grid-column: 1 / 3;
+    justify-content: flex-start;
+  }
+}
+
+/* 手機設備 (576px 及以下) */
+@media (max-width: 576px) {
+  .main-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .app-title {
+    font-size: 22px;
+  }
+
+  .section-title {
+    font-size: 16px;
+  }
+
+  .card {
+    padding: 12px;
+  }
+
+  .project-info {
+    grid-template-columns: 1fr;
+  }
+
+  .project-description {
+    grid-column: span 1;
+  }
+
+  .add-member-group {
+    flex-direction: column;
+  }
+
+  .add-member-group .btn {
+    align-self: flex-start;
+  }
+
+  /* 交易列表調整 */
+  .expense-row {
+    scroll-snap-align: center;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    border-radius: 10px;
+    padding: 12px;
+    margin: 0 auto;
+    position: relative;
+    flex: 0 0 calc(100% - 40px);
+    width: calc(100% - 40px);
+    max-width: none;
+    min-width: calc(100% - 40px);
+    box-sizing: border-box;
+  }
+
+  .expense-info {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+
+  .expense-name {
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 4px;
+    padding: 0 5px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .expense-list {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    gap: 10px;
+    padding: 5px 0;
+    margin: 0 -12px;
+    padding: 5px 12px;
+    scroll-padding: 0;
+    width: 100%;
+    -webkit-overflow-scrolling: touch;
+    justify-content: flex-start;
+    align-items: center;
+  }
+
+  .expense-list::-webkit-scrollbar {
+    display: none;
+  }
+
+  .scroll-indicator {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    margin: 10px 0;
+  }
+
+  .scroll-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #DDD1FB;
+    transition: background-color 0.3s;
+  }
+
+  .scroll-dot.active {
+    background-color: #7C3AED;
+  }
+
+  .transaction-category {
+    font-size: 11px;
+    padding: 2px 8px;
+    margin: 0 0 6px 0;
+  }
+
+  .amount {
+    font-size: 20px;
+    font-weight: 600;
+    color: #1F2937;
+    display: block;
+    width: 100%;
+  }
+
+  .expense-info .avatar {
+    font-size: 28px;
+    width: 46px;
+    height: 46px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(124, 58, 237, 0.1);
+    border-radius: 50%;
+    margin-bottom: 8px;
+  }
+
+  .expense-actions {
+    width: 100%;
+    margin-top: auto;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(124, 58, 237, 0.1);
+  }
+
+  .expense-actions .btn {
+    min-width: 80px;
+    padding: 5px 12px;
+  }
+
+  .transaction-date {
+    font-size: 13px;
+    margin-bottom: 8px;
+  }
+
+  .expense-content {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .expense-edit-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 15px;
+    align-items: center;
+    width: 100%;
+    flex: 0 0 100%;
+    scroll-snap-align: start;
+  }
+
+  .edit-payer,
+  .edit-actions {
+    width: 100%;
+  }
+
+  .payer {
+    width: auto;
+    font-weight: 500;
+    margin-bottom: 5px;
+    font-size: 16px;
+  }
+
+  .add-expense-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .custom-category-container {
+    width: 100%;
+  }
+
+  /* 圖表區域調整 */
+  .chart-wrapper {
+    max-width: 100%;
+  }
+}
+
+/* 超小螢幕設備 (375px 及以下) */
+@media (max-width: 375px) {
+  .app-title {
+    font-size: 20px;
+  }
+
+  .card {
+    padding: 10px;
+    margin-bottom: 15px;
+  }
+
+  .btn {
+    padding: 5px 10px;
+    font-size: 13px;
+  }
+
+  .input-field {
+    padding: 8px;
+  }
+}

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="./assets/styles/style.css">
+  <link rel="stylesheet" href="./assets/styles/settingDialog.css">
+  <link rel="stylesheet" href="./assets/styles/memberList.css">
+  <link rel="stylesheet" href="./assets/styles/memberDetailDialog.css">
+  <link rel="stylesheet" href="./assets/styles/chart.css">
+  <link rel="stylesheet" href="./assets/styles/projectStatus.css">
+  <title>Split the bills App</title>
+</head>
+
+<body>
+  <main class="app-wrapper">
+    <div class="container">
+      <header class="main-header">
+        <h1 class="app-title">Split the bills</h1>
+        <button class="btn setting-btn">setting</button>
+      </header>
+
+      <section class="project-section">
+        <div class="card">
+          <div class="project-header">
+            <h2 class="project-title">Project Name</h2>
+            <div class="project-badge">active</div>
+          </div>
+          <div class="project-info">
+            <div class="info-item">
+              <span class="info-label">created date</span>
+              <span class="info-value project-created"></span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">last update</span>
+              <span class="info-value project-updated"></span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">description</span>
+              <span class="info-value project-description">無描述</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="members-section">
+        <div class="card">
+          <h2 class="section-title">Members</h2>
+          <ul class="member-list">
+            <li class="member-row">
+              <div class="avatar"></div>
+              <span class="member-name">Timmy1</span>
+              <span class="amount">$100</span>
+              <button class="btn remove-btn">remove</button>
+            </li>
+            <li class="member-row">
+              <div class="avatar"></div>
+              <span class="member-name">Timmy2</span>
+              <span class="amount">$100</span>
+              <button class="btn remove-btn">remove</button>
+            </li>
+          </ul>
+          <div class="add-member-group">
+            <input type="text" class="input-field" placeholder="Add new member" />
+            <button class="btn add-btn">add</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="transactions-section">
+        <div class="card">
+          <h2 class="section-title">Transactions</h2>
+          <div class="expense-list">
+            <!-- <div class="expense-row">
+              <div class="expense-info">
+                <div class="avatar"></div>
+                <span class="payer">Timmy1</span>
+                <div class="expense-content">
+                  <span class="expense-name">lunch with teammates at restaurant</span>
+                  <span class="transaction-date">2024-02-11</span>
+                </div>
+              </div>
+              <span class="amount">$300</span>
+              <div class="expense-actions">
+                <button class="btn remove-btn">remove</button>
+                <button class="btn edit-btn">edit</button>
+              </div>
+            </div> -->
+          </div>
+          <form class="add-expense-group">
+            <input type="text" class="input-field" placeholder="title" />
+            <input type="date" class="input-field" />
+            <input type="number" class="input-field" placeholder="amount" />
+            <select class="input-field category-select">
+              <option value="">category</option>
+            </select>
+            <div class="custom-category-container" style="display: none;">
+              <input type="text" class="input-field custom-category" placeholder="custom category" />
+            </div>
+            <select class="input-field payer-select">
+              <option value="">payer</option>
+            </select>
+            <button class="btn add-btn">add</button>
+          </form>
+        </div>
+      </section>
+
+      <section class="chart-section">
+        <div class="card">
+          <h2 class="section-title">Overall</h2>
+          <div class="chart-wrapper">
+            <div class="chart-placeholder"></div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script type="module" src="./assets/main.js"></script>
+</body>
+
+</html>
