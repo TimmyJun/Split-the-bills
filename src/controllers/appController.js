@@ -480,7 +480,11 @@ export class AppController {
     }
 
     // 創建新交易
-    const paidMembers = [formData.payerId]
+    const paidMembers = []
+    if (formData.participants.includes(formData.payerId)) {
+      paidMembers.push(formData.payerId);
+    }
+    
     const transaction = new Transaction(
       Date.now().toString(),
       formData.title,

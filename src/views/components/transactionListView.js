@@ -101,25 +101,34 @@ export class TransactionListView {
     const avatar = member ? (member.avatar || "😊") : "😊"
     const category = transaction.category || "Miscellaneous"
 
-    const participants = transaction.participants || []
-    const paidMembers = transaction.paidMembers || []
+    // 確定參與者列表
+    const participants = transaction.participants.length > 0
+      ? transaction.participants
+      : members.map(m => m.id)
 
-    const participantsCount = transaction.participants.length || members.length
+    // 確定付款人是否在參與者列表中
+    const payerId = member ? member.id : ''
+    const isPayerParticipant = participants.includes(payerId)
 
-    // 需要支付的成員數量 (不包括付款人)
-    const needToPayCount = participants.includes(member ? member.id : '')
-      ? participantsCount - 1  // 付款人在參與者列表中，減去1
-      : participantsCount      // 付款人不在參與者列表中
+    // 計算需要支付的成員數量
+    const needToPayCount = isPayerParticipant
+      ? participants.length - 1  // 如果付款人在參與者列表中，減去1
+      : participants.length      // 如果付款人不在參與者列表中，全部都要支付
 
-    // 已支付的成員數量
-    const paidCount = paidMembers.length
+    // 計算已支付的成員數量（只計算參與者列表中的已支付成員）
+    const paidParticipants = transaction.paidMembers.filter(
+      memberId => participants.includes(memberId)
+    )
+    const paidCount = paidParticipants.length
 
     // 計算支付進度百分比
-    const progressPercentage = needToPayCount > 0 ? Math.round((paidCount / needToPayCount) * 100) : 100
+    const progressPercentage = needToPayCount > 0
+      ? Math.round((paidCount / needToPayCount) * 100)
+      : 100
 
-    const participantsInfo = participantsCount === members.length
+    const participantsInfo = participants.length === members.length
       ? 'All members'
-      : `${participantsCount} participant${participantsCount > 1 ? 's' : ''}`
+      : `${participants.length} participant${participants.length > 1 ? 's' : ''}`
 
     const paymentStatusClass = progressPercentage === 100
       ? 'payment-status-complete'
@@ -127,7 +136,9 @@ export class TransactionListView {
         ? 'payment-status-progress'
         : 'payment-status-pending'
 
-    const paymentProgressText = needToPayCount > 0 ? `${paidCount}/${needToPayCount}` : '0/0'
+    const paymentProgressText = needToPayCount > 0
+      ? `${paidCount}/${needToPayCount}`
+      : '0/0'
 
     return `
       <div class="expense-row ${paymentStatusClass}" data-transaction-id="${transaction.id}">
