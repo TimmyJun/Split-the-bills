@@ -89,9 +89,7 @@ export class SettingDialog {
               <input type="text" class="input-field" placeholder="Project Name" required>
             </div>
             <div class="form-group">
-              <textarea class="input-field project-description-input" 
-                placeholder="Project Description (optional)" rows="3">
-              </textarea>
+              <textarea class="input-field project-description-input" placeholder="Project Description (optional)" rows="3"></textarea>
             </div>
             <div class="dialog-actions">
               <button type="submit" class="btn add-btn">Create Project</button>
