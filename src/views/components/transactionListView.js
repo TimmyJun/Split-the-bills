@@ -108,22 +108,24 @@ export class TransactionListView {
 
     // 確定付款人是否在參與者列表中
     const payerId = member ? member.id : ''
-    const isPayerParticipant = participants.includes(payerId)
+    const totalParticipants = participants.length
 
-    // 計算需要支付的成員數量
-    const needToPayCount = isPayerParticipant
-      ? participants.length - 1  // 如果付款人在參與者列表中，減去1
-      : participants.length      // 如果付款人不在參與者列表中，全部都要支付
+    let paidCount = 0
 
-    // 計算已支付的成員數量（只計算參與者列表中的已支付成員）
-    const paidParticipants = transaction.paidMembers.filter(
-      memberId => participants.includes(memberId)
-    )
-    const paidCount = paidParticipants.length
+    participants.forEach(participantId => {
+      // 如果是付款人且在参与者列表中，自动视为已付款
+      if (participantId === payerId) {
+        paidCount++
+      }
+      // 如果在已付款列表中
+      else if (transaction.paidMembers && transaction.paidMembers.includes(participantId)) {
+        paidCount++
+      }
+    })
 
     // 計算支付進度百分比
-    const progressPercentage = needToPayCount > 0
-      ? Math.round((paidCount / needToPayCount) * 100)
+    const progressPercentage = totalParticipants > 0
+      ? Math.round((paidCount / totalParticipants) * 100)
       : 100
 
     const participantsInfo = participants.length === members.length
@@ -136,34 +138,32 @@ export class TransactionListView {
         ? 'payment-status-progress'
         : 'payment-status-pending'
 
-    const paymentProgressText = needToPayCount > 0
-      ? `${paidCount}/${needToPayCount}`
-      : '0/0'
+    const paymentProgressText = `${paidCount}/${totalParticipants}`
 
     return `
-      <div class="expense-row ${paymentStatusClass}" data-transaction-id="${transaction.id}">
-        <div class="expense-info">
-        <div class="avatar">${avatar}</div>
-        <span class="payer">${transaction.payer}</span>
-        <div class="expense-content">
-          <span class="expense-name">${transaction.title} 
-            <span class="transaction-category">${category}</span>
-          </span>
-          <span class="transaction-date">${transaction.date}</span>
-          <span class="transaction-participants">${participantsInfo}</span>
-        </div>
-      </div>
-      <div class="payment-progress-container">
-        <div class="payment-progress-bar" style="width: ${progressPercentage}%"></div>
-        <span class="payment-progress-text">${paymentProgressText}</span>
-      </div>
-      <span class="amount">$${transaction.amount}</span>
-      <div class="expense-actions">
-        <button class="btn edit-btn">Edit</button>
-        <button class="btn remove-btn">Remove</button>
+    <div class="expense-row ${paymentStatusClass}" data-transaction-id="${transaction.id}">
+      <div class="expense-info">
+      <div class="avatar">${avatar}</div>
+      <span class="payer">${transaction.payer}</span>
+      <div class="expense-content">
+        <span class="expense-name">${transaction.title} 
+          <span class="transaction-category">${category}</span>
+        </span>
+        <span class="transaction-date">${transaction.date}</span>
+        <span class="transaction-participants">${participantsInfo}</span>
       </div>
     </div>
-    `;
+    <div class="payment-progress-container">
+      <div class="payment-progress-bar" style="width: ${progressPercentage}%"></div>
+      <span class="payment-progress-text">${paymentProgressText}</span>
+    </div>
+    <span class="amount">$${transaction.amount}</span>
+    <div class="expense-actions">
+      <button class="btn edit-btn">Edit</button>
+      <button class="btn remove-btn">Remove</button>
+    </div>
+  </div>
+  `;
   }
 
   // 更新成員選擇器

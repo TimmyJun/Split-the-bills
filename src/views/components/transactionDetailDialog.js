@@ -56,8 +56,21 @@ export class TransactionDetailDialog {
 
     const isPayerParticipant = participants.includes(payerId)
 
-    const needToPayCount = isPayerParticipant ? participants.length - 1 : participants.length
-    const paidCount = transaction.paidMembers.length
+    let paidCount = 0
+    const totalParticipants = participants.length
+
+    // 檢查每個參與者是否已付款
+    participants.forEach(participantId => {
+      // 如果是付款人且在參與者列表中，自動視為已付款
+      if (participantId === payerId) {
+        paidCount++
+      }
+      // 如果在已付款列表中
+      else if (transaction.paidMembers && transaction.paidMembers.includes(participantId)) {
+        paidCount++
+      }
+    })
+
 
     // 為每個參與成員準備顯示項目
     members.forEach(member => {
@@ -151,7 +164,7 @@ export class TransactionDetailDialog {
       <div class="summary-item">
         <span class="summary-label">Status:</span>
         <span class="summary-value">
-          ${paidCount} of ${needToPayCount} confirmed
+          ${paidCount} of ${totalParticipants} confirmed
         </span>
       </div>
     </div>
@@ -166,7 +179,7 @@ export class TransactionDetailDialog {
     }
 
     // 綁定付款確認按鈕事件
-    const paymentButtons = this.dialog.querySelectorAll('.payment-toggle-btn');
+    const paymentButtons = this.dialog.querySelectorAll('.payment-toggle-btn')
     paymentButtons.forEach(button => {
       button.addEventListener('click', (e) => {
         const parentItem = e.target.closest('.participant-payment-item');
@@ -213,15 +226,21 @@ export class TransactionDetailDialog {
 
   // 更新付款摘要資訊
   updatePaymentSummary() {
-    // 排除所有付款人（包括外部付款人）
-    const totalParticipants = this.dialog.querySelectorAll('.participant-payment-item:not(.payer)').length;
+    // 獲取所有參與者，但排除外部付款人
+    const participants = this.dialog.querySelectorAll('.participant-payment-item:not(.external-payer)');
+    const totalParticipants = participants.length;
 
-    // 計算已確認付款的參與者數量（排除付款人）
-    const confirmedParticipants = this.dialog.querySelectorAll('.participant-payment-item.paid:not(.payer)').length;
+    // 計算已確認付款的參與者數量（包括付款人）
+    let paidCount = 0;
+    participants.forEach(participant => {
+      if (participant.classList.contains('paid')) {
+        paidCount++;
+      }
+    });
 
     const summaryValue = this.dialog.querySelector('.summary-value');
     if (summaryValue) {
-      summaryValue.textContent = `${confirmedParticipants} of ${totalParticipants} confirmed`;
+      summaryValue.textContent = `${paidCount} of ${totalParticipants} confirmed`;
     }
   }
 }
