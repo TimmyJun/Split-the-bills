@@ -11,7 +11,7 @@ A simple and intuitive bill-splitting application to help users fairly divide ex
 Try it out here: **[Split the Bills](https://timmyjun.github.io/Split-the-bills/)**
 
 ## 🛠️ Tech Stack
-- **Frontend**: HTML, CSS, JavaScript
+- **Frontend**: HTML, CSS, JavaScript, Chart.js
 - **Deployment**: GitHub Pages
 
 ## 📖 Usage
