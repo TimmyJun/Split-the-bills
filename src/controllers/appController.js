@@ -9,6 +9,7 @@ import { MemberDetailDialog } from "../views/components/memberDetailDialog.js"
 import { ChartView } from "../views/components/chartView.js"
 import { ProjectStatusView } from "../views/components/projectStatusView.js"
 import { TransactionDetailDialog } from "../views/components/transactionDetailDialog.js"
+import { AnimationService } from "../services/animationService.js"
 
 export class AppController {
   constructor() {
@@ -23,25 +24,30 @@ export class AppController {
     this.chartView = new ChartView(document.querySelector('.chart-placeholder'))
     this.currentChartType = 'category'
     this.projectStatusView = new ProjectStatusView()
+    this.animationService = new AnimationService()
     this.setupEventListeners()
     this.initialize()
   }
 
   initialize() {
+    this.animationService.initialize()
+
     if (this.projectManager.projects.length === 0) {
       // New user - show create project dialog
       this.resetUI()
-      this.showNewProjectDialog();
+      this.animationService.hideLoading()
+      this.showNewProjectDialog()
     } else {
       // Existing user - load most recent project
-      this.updateUI();
+      this.updateUI()
+      this.animationService.handleFirstLoad()
     }
 
     // 設定日期輸入框為今天
-    const dateInput = document.querySelector('.transactions-section input[type="date"]');
+    const dateInput = document.querySelector('.transactions-section input[type="date"]')
     if (dateInput) {
-      const today = new Date().toISOString().split('T')[0];
-      dateInput.value = today;
+      const today = new Date().toISOString().split('T')[0]
+      dateInput.value = today
     }
   }
 
@@ -180,11 +186,19 @@ export class AppController {
               this.showNewProjectDialog()
             }, 0)
           } else {
-            this.updateUI()
+            this.animationService.handleProjectTransition(() => {
+              this.updateUI()
+            })
           }
         } else if (action === 'select') {
-          this.projectManager.switchProject(projectId)
-          this.updateUI()
+          if(this.projectManager.currentProject?.id !== projectId) {
+            this.projectManager.switchProject(projectId)
+            this.animationService.handleProjectTransition(() => {
+              this.updateUI()
+            })
+          } else {
+            this.dialog.close()
+          }
         } else if (action === "edit") {
           this.projectManager.updateProjectName(projectId, newName)
 
@@ -322,6 +336,11 @@ export class AppController {
 
     // 清空輸入欄位並聚焦
     this.memberListView.clearAddMemberInput()
+
+    setTimeout(() => {
+      const newMemberElement = document.querySelector(`.member-row[data-member-id="${newMember.id}"]`)
+      this.animationService.highlightNewItem(newMemberElement)
+    }, 100)
   }
 
   handleRemoveMember(memberName) {
@@ -507,6 +526,11 @@ export class AppController {
 
     // 更新 UI
     this.updateUI()
+
+    setTimeout(() => {
+      const newTransactionElement = document.querySelector(`.expense-row[data-transaction-id="${transaction.id}"]`)
+      this.animationService.highlightNewItem(newTransactionElement)
+    }, 100)
   }
 
   handleRemoveTransaction(transactionId) {
