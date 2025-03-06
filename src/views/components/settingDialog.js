@@ -71,7 +71,7 @@ export class SettingDialog {
 
 
   // new user
-  async showNewProjectDialog(onSubmit) {
+  async showNewProjectDialog(onSubmit, isForceShow = false) {
     this.clearError() // 清除任何現有的錯誤訊息
 
     // 確保 dialog 是關閉的狀態
@@ -80,22 +80,22 @@ export class SettingDialog {
     }
 
     this.dialog.innerHTML = `
-           <div class="dialog-header">
-            <h2 class="section-title">Create New Project</h2>
-            <button class="btn close-btn" type="button">&times;</button>
+         <div class="dialog-header">
+          <h2 class="section-title">Create New Project</h2>
+          ${!isForceShow ? '<button class="btn close-btn" type="button">&times;</button>' : ''}
+        </div>
+        <form id="new-project-form" class="dialog-form">
+          <div class="form-group">
+            <input type="text" class="input-field" placeholder="Project Name" required>
           </div>
-          <form id="new-project-form" class="dialog-form">
-            <div class="form-group">
-              <input type="text" class="input-field" placeholder="Project Name" required>
-            </div>
-            <div class="form-group">
-              <textarea class="input-field project-description-input" placeholder="Project Description (optional)" rows="3"></textarea>
-            </div>
-            <div class="dialog-actions">
-              <button type="submit" class="btn add-btn">Create Project</button>
-            </div>
-          </form>
-          `;
+          <div class="form-group">
+            <textarea class="input-field project-description-input" placeholder="Project Description (optional)" rows="3"></textarea>
+          </div>
+          <div class="dialog-actions">
+            <button type="submit" class="btn add-btn">Create Project</button>
+          </div>
+        </form>
+        `;
 
     const form = this.dialog.querySelector('form')
     const nameInput = form.querySelector('.input-field:not(.project-description-input)')
@@ -109,15 +109,31 @@ export class SettingDialog {
 
       if (name) {
         try {
+          const wasForceShown = this._forceShowActive
+          this._forceShowActive = false
+
+          if (this._originalClose) {
+            this.dialog.close = this._originalClose;
+            this._originalClose = null;
+          }
+
           await onSubmit(name, description)
           this.dialog.close()
+          this._forceShowActive = false
         } catch (error) {
-          this.showError(input, error.message)
+          // 恢復強制顯示
+          this._forceShowActive = isForceShow;
+          this.showError(nameInput, error.message);
         }
       }
     }
 
-    closeBtn.onclick = () => this.dialog.close();
+    if (closeBtn) {
+      closeBtn.onclick = () => this.dialog.close();
+    }
+
+    this.setupForceShowBehavior(isForceShow)
+
     this.dialog.showModal()
     this.updateDialogPosition()
 
@@ -309,4 +325,74 @@ export class SettingDialog {
     }
     input.addEventListener('input', clearError)
   }
+
+  setupForceShowBehavior(isForceShow) {
+    // 移除任何先前的點擊事件監聽器
+    if (this._clickOutsideHandler) {
+      this.dialog.removeEventListener('click', this._clickOutsideHandler);
+      this._clickOutsideHandler = null;
+    }
+
+    if (this._originalClose) {
+      this.dialog.close = this._originalClose;
+      this._originalClose = null;
+    }
+
+    this._forceShowActive = false
+
+    if (isForceShow) {
+      // 保存原始的 close 方法
+      this._originalClose = this.dialog.close;
+
+      // 覆蓋 close 方法，使其在表單提交成功時才能關閉
+      this.dialog.close = () => {
+        // 只允許在非強制顯示狀態時關閉
+        if (!this._forceShowActive) {
+          this._originalClose.call(this.dialog);
+        }
+      };
+
+      this._forceShowActive = true
+    } else {
+      // 如果存在原始 close 方法，恢復它
+      if (this._originalClose) {
+        this.dialog.close = this._originalClose;
+        this._originalClose = null;
+      }
+
+      this._forceShowActive = false;
+
+      // 添加點擊外部關閉的功能
+      this._clickOutsideHandler = (e) => {
+        const dialogDimensions = this.dialog.getBoundingClientRect();
+        if (
+          e.clientX < dialogDimensions.left ||
+          e.clientX > dialogDimensions.right ||
+          e.clientY < dialogDimensions.top ||
+          e.clientY > dialogDimensions.bottom
+        ) {
+          this.dialog.close();
+        }
+      };
+      this.dialog.addEventListener('click', this._clickOutsideHandler);
+    }
+  }
+
+  onDialogClosed(callback) {
+    if (!this._closeCallbacks) {
+      this._closeCallbacks = [];
+
+      // 監聽原生的 close 事件
+      this.dialog.addEventListener('close', () => {
+        this._closeCallbacks.forEach(cb => cb());
+      });
+    }
+
+    // 添加到回調列表
+    this._closeCallbacks.push(callback);
+
+    // 返回 this 以便鏈式調用
+    return this;
+  }
+
 }

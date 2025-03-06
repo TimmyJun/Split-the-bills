@@ -5,6 +5,7 @@ export class ProjectManager {
   constructor() {
     this.projects = []
     this.currentProject = null
+    this.onProjectsEmpty = null
     this.loadProjects()
   }
 
@@ -79,12 +80,20 @@ export class ProjectManager {
 
     if (this.projects.length === 0) {
       this.currentProject = null
+
+      if (typeof this.onProjectsEmpty === 'function') {
+        this.onProjectsEmpty();
+      }
     } else if (this.currentProject?.id === projectId) {
       this.currentProject = this.getMostRecentProject();
     }
 
     this.saveProjects()
     return this.projects.length === 0
+  }
+
+  setOnProjectsEmptyCallback(callback) {
+    this.onProjectsEmpty = callback;
   }
 
   isProjectNameExists(name, excludeId = null) {

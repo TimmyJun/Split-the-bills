@@ -32,6 +32,12 @@ export class AppController {
   initialize() {
     this.animationService.initialize()
 
+    this.projectManager.setOnProjectsEmptyCallback(() => {
+      setTimeout(() => {
+        this.showNewProjectDialog();
+      }, 300)
+    })
+
     if (this.projectManager.projects.length === 0) {
       // New user - show create project dialog
       this.resetUI()
@@ -161,16 +167,47 @@ export class AppController {
   }
 
   showNewProjectDialog() {
+    const isForceShow = this.projectManager.projects.length === 0;
+
     this.dialogView.showNewProjectDialog(async (name, description) => {
-      this.projectManager.createProject(name, description)
-      this.updateUI()
-    })
+      // 顯示載入中遮罩
+      this.animationService.showLoading();
+
+      // 創建新專案
+      this.projectManager.createProject(name, description);
+
+      // 使用動畫轉場來更新UI
+      this.animationService.handleProjectTransition(() => {
+        this.updateUI();
+      });
+    }, isForceShow);
+
+    // 只在強制顯示模式下監聽關閉事件
+    if (isForceShow) {
+      // 移除之前的回調以避免重複
+      if (this._dialogCloseHandler) {
+        this.dialogView._closeCallbacks = this.dialogView._closeCallbacks.filter(
+          cb => cb !== this._dialogCloseHandler
+        )
+      }
+
+      this._dialogCloseHandler = () => {
+        if (this.projectManager.projects.length === 0) {
+          // 稍微延遲以避免立即重新打開的衝突
+          setTimeout(() => {
+            this.showNewProjectDialog()
+          }, 100)
+        }
+      };
+
+      this.dialogView.onDialogClosed(this._dialogCloseHandler)
+    }
   }
 
   showProjectListDialog() {
     if (this.projectManager.projects.length === 0) {
-      this.showNewProjectDialog()
-      return
+      this.showNewProjectDialog();
+      return;
     }
 
     this.dialogView.showProjectListDialog(
@@ -178,41 +215,43 @@ export class AppController {
       this.projectManager.currentProject?.id,
       async (projectId, action, newName, newDescription) => {
         if (action === 'delete') {
-          const isAllProjectsDeleted = this.projectManager.deleteProject(projectId)
-          this.resetUI()
+          this.projectManager.deleteProject(projectId);
+          this.resetUI();
 
-          if (isAllProjectsDeleted) {
-            setTimeout(() => {
-              this.showNewProjectDialog()
-            }, 0)
-          } else {
+          // 如果還有專案，使用動畫切換到下一個專案
+          if (this.projectManager.projects.length > 0) {
             this.animationService.handleProjectTransition(() => {
-              this.updateUI()
-            })
+              this.updateUI();
+            });
           }
-        } else if (action === 'select') {
-          if(this.projectManager.currentProject?.id !== projectId) {
-            this.projectManager.switchProject(projectId)
+          // 如果沒有專案，onProjectsEmpty 回調會自動處理
+        }
+        else if (action === 'select') {
+          // 只有在選擇不同專案時才進行切換
+          if (this.projectManager.currentProject?.id !== projectId) {
+            this.projectManager.switchProject(projectId);
             this.animationService.handleProjectTransition(() => {
-              this.updateUI()
-            })
+              this.updateUI();
+            });
           } else {
-            this.dialog.close()
+            this.dialogView.dialog.close();
           }
-        } else if (action === "edit") {
-          this.projectManager.updateProjectName(projectId, newName)
+        }
+        else if (action === "edit") {
+          this.projectManager.updateProjectName(projectId, newName);
 
           if (newDescription !== undefined) {
-            this.projectManager.updateProjectDescription(projectId, newDescription)
+            this.projectManager.updateProjectDescription(projectId, newDescription);
           }
+
           // 如果正在編輯當前項目，更新 UI
           if (this.projectManager.currentProject?.id === projectId) {
-            this.updateUI()
+            this.updateUI();
           }
         }
       },
       () => this.showNewProjectDialog()
-    );
+    )
   }
 
   resetUI() {
@@ -320,8 +359,8 @@ export class AppController {
 
     // 檢查是否已有同名成員
     if (currentProject.members.some(m => m.name === memberName)) {
-      alert('This member is already in the list');
-      return;
+      alert('This member is already in the list')
+      return
     }
 
     // 建立新成員並添加到專案

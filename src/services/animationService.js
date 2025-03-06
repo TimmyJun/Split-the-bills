@@ -33,7 +33,8 @@ export class AnimationService {
   // 顯示載入中遮罩
   showLoading() {
     if (this.loadingOverlay) {
-      this.loadingOverlay.classList.remove('hide');
+      this.loadingOverlay.classList.remove('hide')
+      document.body.appendChild(this.loadingOverlay)
     }
   }
 
@@ -58,15 +59,24 @@ export class AnimationService {
 
   // 觸發進場動畫
   triggerEntranceAnimation() {
+    // 檢查sections是否都存在於DOM中
+    const allSectionsExist = this.sections.every(selector => {
+      return document.querySelector(selector) !== null
+    })
+
+    if (!allSectionsExist) {
+      console.warn('Some sections are missing in the DOM. Animation might not work properly.');
+    }
+
     // 依次為各section添加顯示class
     this.sections.forEach((selector, index) => {
-      const section = document.querySelector(selector);
+      const section = document.querySelector(selector)
       if (section) {
         setTimeout(() => {
-          section.classList.add('animate-in');
-        }, index * 100); // 為每個section設置遞增的延遲
+          section.classList.add('animate-in')
+        }, index * 100)
       }
-    });
+    })
   }
 
   // 處理專案切換的轉場動畫
@@ -76,29 +86,29 @@ export class AnimationService {
 
     // 重置各section的動畫狀態
     this.sections.forEach(selector => {
-      const section = document.querySelector(selector);
+      const section = document.querySelector(selector)
       if (section) {
-        section.classList.remove('animate-in');
+        section.classList.remove('animate-in')
       }
-    });
+    })
 
     // 顯示載入中遮罩
-    this.showLoading();
+    this.showLoading()
 
     // 延遲執行回調以允許過渡效果顯示
     setTimeout(() => {
       // 執行切換邏輯
       if (typeof callback === 'function') {
-        callback();
+        callback()
       }
 
       // 移除過渡class並觸發進場動畫
       setTimeout(() => {
-        document.querySelector('.app-wrapper').classList.remove('transitioning');
-        this.triggerEntranceAnimation();
-        this.hideLoading();
-      }, 300);
-    }, 300);
+        document.querySelector('.app-wrapper').classList.remove('transitioning')
+        this.triggerEntranceAnimation()
+        this.hideLoading()
+      }, 300)
+    }, 300)
   }
 
   // 為新增的項目添加高亮效果
