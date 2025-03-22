@@ -131,38 +131,42 @@ export class Project {
 
     // 計算該成員支付的總額和各類別消費
     this.transactions.forEach(transaction => {
+      // 計算每人份額
+      const perPersonAmount = parseFloat(transaction.amount) / transaction.participants.length;
+
       // 記錄所有相關交易
       if (transaction.payer === member.name) {
-        stats.transactions.push(transaction)
-        stats.totalPaid += parseFloat(transaction.amount)
+        // 將整筆交易添加到付款交易列表
+        stats.transactions.push({
+          ...transaction,
+          // 添加個人實際份額信息
+          personalShare: perPersonAmount
+        });
 
-        // 更新類別明細
-        if (!stats.categoryBreakdown[transaction.category]) {
-          stats.categoryBreakdown[transaction.category] = 0;
-        }
-        stats.categoryBreakdown[transaction.category] += parseFloat(transaction.amount);
+        stats.totalPaid += parseFloat(transaction.amount);
       }
 
       // 記錄該成員參與的所有交易
       if (transaction.participants.includes(memberId)) {
-        stats.participatedTransactions.push(transaction)
+        // 添加交易到參與交易列表，添加個人份額信息
+        stats.participatedTransactions.push({
+          ...transaction,
+          // 添加個人實際份額信息
+          personalShare: perPersonAmount,
+          // 添加交易總額
+          totalAmount: parseFloat(transaction.amount)
+        });
 
         // 計算該成員在此交易中應付的金額 (平均分配)
-        const perPersonExpense = parseFloat(transaction.amount) / transaction.participants.length
-        stats.shouldPay += perPersonExpense
+        stats.shouldPay += perPersonAmount;
+
+        // 更新類別統計 - 重要改變: 無論是否為付款人，只要參與就計入類別消費
+        if (!stats.categoryBreakdown[transaction.category]) {
+          stats.categoryBreakdown[transaction.category] = 0;
+        }
+        stats.categoryBreakdown[transaction.category] += perPersonAmount;
       }
-    })
-
-    // 計算項目總花費和人均花費
-    // const totalProjectExpense = this.transactions.reduce((sum, t) => sum + parseFloat(t.amount), 0);
-    // const perPersonExpense = this.members.length > 0 ? totalProjectExpense / this.members.length : 0;
-
-    // 設置應付金額和餘額
-    // stats.shouldPay = perPersonExpense;
-    // stats.balance = stats.totalPaid - stats.shouldPay
-
-    // 計算分帳詳細資訊
-    // stats.splitDetails = this.calculateSplitDetails()
+    });
 
     // 設置餘額
     stats.balance = stats.totalPaid - stats.shouldPay;
@@ -170,7 +174,7 @@ export class Project {
     // 計算分帳詳細資訊
     stats.splitDetails = this.calculateSplitDetails();
 
-    return stats
+    return stats;
   }
 
   calculateAllMemberStats() {
@@ -235,50 +239,59 @@ export class Project {
     const creditors = [];
 
     Object.values(stats.membersStats).forEach(memberStat => {
-      if (memberStat.balance < -0.01) { // 負餘額，是債務人
+      // 計算實際餘額，考慮已付款狀態
+      const actualBalance = this.calculateActualBalance(memberStat);
+
+      if (actualBalance < -0.01) { // 負餘額，是債務人
         debtors.push({
           ...memberStat,
-          remainingDebt: Math.abs(memberStat.balance)
+          remainingDebt: Math.abs(actualBalance)
         });
-      } else if (memberStat.balance > 0.01) { // 正餘額，是債權人
+      } else if (actualBalance > 0.01) { // 正餘額，是債權人
         creditors.push({
           ...memberStat,
-          remainingCredit: memberStat.balance
-        });
+          remainingCredit: actualBalance
+        })
       }
-    });
+    })
 
     // 解決債務，債務人向債權人付錢
     debtors.forEach(debtor => {
-      let remainingDebt = debtor.remainingDebt;
+      let remainingDebt = debtor.remainingDebt
 
       // 當還有債務且有債權人可收錢時
       for (let i = 0; i < creditors.length && remainingDebt > 0.01; i++) {
-        const creditor = creditors[i];
-        if (creditor.remainingCredit < 0.01) continue;
+        const creditor = creditors[i]
+        if (creditor.remainingCredit < 0.01) continue
 
         // 計算本次還款金額
-        const amount = Math.min(remainingDebt, creditor.remainingCredit);
+        const amount = Math.min(remainingDebt, creditor.remainingCredit)
         if (amount > 0.01) {
-          // 添加還款記錄
-          settlements.push({
-            from: debtor.id,
-            fromName: debtor.name,
-            fromAvatar: debtor.avatar,
-            to: creditor.id,
-            toName: creditor.name,
-            toAvatar: creditor.avatar,
-            amount: parseFloat(amount.toFixed(2))
-          });
+          // 檢查此人對此債權人的付款狀態
+          const alreadyPaid = this.isPaymentConfirmed(debtor.id, creditor.id)
+
+          // 只有未付款的才添加到結算列表
+          if (!alreadyPaid) {
+            // 添加還款記錄
+            settlements.push({
+              from: debtor.id,
+              fromName: debtor.name,
+              fromAvatar: debtor.avatar,
+              to: creditor.id,
+              toName: creditor.name,
+              toAvatar: creditor.avatar,
+              amount: parseFloat(amount.toFixed(2))
+            })
+          }
 
           // 更新餘額
           remainingDebt -= amount;
-          creditor.remainingCredit -= amount;
+          creditor.remainingCredit -= amount
         }
       }
-    });
+    })
 
-    return settlements;
+    return settlements
   }
 
   updateStatus(status) {
@@ -292,5 +305,41 @@ export class Project {
 
   isEditable() {
     return this.status === "active"
+  }
+
+  calculateActualBalance(memberStat) {
+    let actualBalance = memberStat.balance
+
+    // 調整已確認付款的金額
+    this.transactions.forEach(transaction => {
+      // 如果成員是參與者且已確認付款，但計算中尚未減去
+      if (transaction.participants.includes(memberStat.id) &&
+        transaction.paidMembers.includes(memberStat.id) &&
+        transaction.payer !== memberStat.name) {
+
+        // 該成員在此交易中的份額已經付款，但餘額計算可能尚未反映
+        const perPersonAmount = parseFloat(transaction.amount) / transaction.participants.length;
+      }
+    })
+
+    return actualBalance
+  }
+
+  isPaymentConfirmed(fromMemberId, toMemberId) {
+    const relevantTransactions = this.transactions.filter(transaction => {
+      const memberIsPayer = this.getMemberById(toMemberId) &&
+        this.getMemberById(toMemberId).name === transaction.payer
+      const fromMemberIsParticipant = transaction.participants.includes(fromMemberId)
+
+      return memberIsPayer && fromMemberIsParticipant;
+    })
+
+    // 檢查在所有相關交易中，fromMemberId 是否都確認了付款
+    if (relevantTransactions.length === 0) return false
+
+    // 對於每筆交易，檢查 fromMemberId 是否在已付款名單中
+    return relevantTransactions.every(transaction =>
+      transaction.paidMembers && transaction.paidMembers.includes(fromMemberId)
+    )
   }
 }

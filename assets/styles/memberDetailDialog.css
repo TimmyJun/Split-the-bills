@@ -185,18 +185,88 @@
 }
 
 /* 交易記錄樣式 */
+.transaction-item {
+  margin-bottom: 8px;
+  padding: 8px;
+  border-radius: 6px;
+  border-left: 3px solid transparent;
+  display: flex;
+  justify-content: space-between;
+}
+
+.transaction-item.transaction-as-payer {
+  border-left-color: #4ade80;
+  background-color: rgba(74, 222, 128, 0.1);
+}
+
+.transaction-item.transaction-as-participant {
+  border-left-color: #a78bfa;
+  background-color: rgba(167, 139, 250, 0.1);
+}
+
+.transaction-item.is-paid {
+  background-color: rgba(74, 222, 128, 0.1);
+}
+
+.transaction-item.is-unpaid {
+  background-color: rgba(251, 191, 36, 0.1);
+}
+
+.transaction-item .personal-share {
+  font-size: 0.8rem;
+  color: #4B5563;
+  margin-left: 5px;
+}
+
+.transaction-item .transaction-total {
+  font-size: 0.8rem;
+  color: #4B5563;
+  display: block;
+  margin-top: 2px;
+}
+
+.transaction-role {
+  font-size: 0.8rem;
+  color: #6b7280;
+  margin-top: 2px;
+}
+
+.transaction-item.transaction-as-payer .transaction-role {
+  color: #10B981;
+}
+
+.transaction-item.transaction-as-participant .transaction-role {
+  color: #8B5CF6;
+}
+
+.payment-status {
+  font-size: 0.8rem;
+  padding: 0 4px;
+  border-radius: 4px;
+}
+
+.transaction-item.paid .payment-status {
+  color: #16a34a;
+}
+
+.transaction-item.unpaid .payment-status {
+  color: #f59e0b;
+}
+
+.transaction-item.is-paid .payment-status {
+  color: #10B981;
+  font-weight: 500;
+}
+
+.transaction-item.is-unpaid .payment-status {
+  color: #F59E0B;
+  font-weight: 500;
+}
+
 .member-detail-dialog .transactions-container {
   display: flex;
   flex-direction: column;
   gap: 10px;
-}
-
-.member-detail-dialog .transaction-item {
-  display: flex;
-  justify-content: space-between;
-  padding: 12px;
-  border-radius: 4px;
-  background-color: #f5f5f5;
 }
 
 .member-detail-dialog .transaction-left {
@@ -228,6 +298,14 @@
 .member-detail-dialog .transaction-category {
   font-size: 0.8rem;
   color: #666;
+}
+
+.member-detail-dialog .section-explanation {
+  font-size: 0.8rem;
+  color: #6B7280;
+  font-style: italic;
+  margin-bottom: 12px;
+  line-height: 1.4;
 }
 
 /* 可點擊的成員行樣式 */

@@ -162,7 +162,15 @@ export class AppController {
     // 保存專案變更
     this.projectManager.saveProjects()
 
-    // 更新 UI (重新渲染交易列表以顯示更新後的付款狀態)
+    // 如果會員詳情對話框當前正在顯示，需要更新它
+    if (this.memberDetailDialog.dialog.open && this.memberDetailDialog.currentMemberId) {
+      const member = currentProject.getMemberById(this.memberDetailDialog.currentMemberId)
+      if(member) {
+        const stats = currentProject.calculateMemberStats(this.memberDetailDialog.currentMemberId)
+        this.memberDetailDialog.showMemberDetail(member, stats)
+      }
+    }
+    
     this.updateUI()
   }
 
