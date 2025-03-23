@@ -455,13 +455,9 @@
   background-color: rgba(0, 0, 0, 0.025);
   font-size: 0.85rem;
   border-top: 1px dashed rgba(0, 0, 0, 0.1);
-  max-height: 0;
+  max-height: 500px;
   overflow: hidden;
   transition: max-height 0.3s ease;
-}
-
-.settlement-group:hover .settlement-details {
-  max-height: 500px;
 }
 
 .detail-label {
