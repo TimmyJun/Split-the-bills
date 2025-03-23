@@ -11,6 +11,33 @@
 }
 
 /* 圖表容器樣式 */
+.settlement-wrapper {
+  width: 100%;
+  height: 100%;
+  max-height: 400px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  padding: 0 5px;
+}
+
+.settlement-wrapper::-webkit-scrollbar {
+  width: 6px;
+}
+
+.settlement-wrapper::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.settlement-wrapper::-webkit-scrollbar-thumb {
+  background: #d4d4d4;
+  border-radius: 3px;
+}
+
+.settlement-wrapper::-webkit-scrollbar-thumb:hover {
+  background: #a0a0a0;
+}
+
 .chart-wrapper {
   aspect-ratio: 1;
   max-width: 400px;
@@ -40,8 +67,117 @@
 .settlement-summary {
   width: 100%;
   padding: 10px;
-  position: relative;
-  z-index: 1;
+}
+
+.settlement-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 15px;
+  width: 100%;
+}
+
+.settlement-group-card {
+  background-color: #EDE9FE;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s, box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
+}
+
+.settlement-group-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.group-header {
+  background-color: #7C3AED;
+  color: white;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.receiver-avatar {
+  font-size: 20px;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.receiver-name {
+  font-weight: 500;
+  flex-grow: 1;
+}
+
+.settlement-items-list {
+  padding: 10px;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.payment-item {
+  display: flex;
+  align-items: center;
+  padding: 5px;
+  border-radius: 4px;
+  background-color: rgba(255, 255, 255, 0.5);
+}
+
+.payer-info {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-grow: 1;
+}
+
+.payer-avatar {
+  font-size: 16px;
+}
+
+.payer-name {
+  font-size: 14px;
+}
+
+.payment-arrow {
+  margin: 0 8px;
+  color: #6D28D9;
+}
+
+.payment-amount {
+  font-weight: 600;
+  color: #1F2937;
+}
+
+.group-total {
+  background-color: rgba(124, 58, 237, 0.1);
+  padding: 8px 10px;
+  text-align: right;
+  font-weight: 600;
+  color: #5B21B6;
+}
+
+.scroll-hint {
+  text-align: center;
+  padding: 5px;
+  color: #6B7280;
+  font-size: 12px;
+  background-color: rgba(124, 58, 237, 0.1);
+  border-radius: 4px;
+  margin-bottom: 10px;
+  animation: pulse 2s infinite;
+}
+
+.scroll-hint.fade-out {
+  animation: fade-out 0.5s forwards;
 }
 
 .settlement-title {
@@ -103,6 +239,37 @@
   margin-top: 5px;
   padding-top: 5px;
   border-top: 1px solid rgba(124, 58, 237, 0.1);
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 0.6;
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0.6;
+  }
+}
+
+@keyframes fade-out {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .settlement-grid {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px;
+  }
 }
 
 @media (max-width: 576px) {
@@ -171,6 +338,25 @@
     font-size: 16px;
     padding-top: 3px;
     margin-top: 3px;
+  }
+
+  .settlement-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .group-header {
+    padding: 8px;
+  }
+
+  .receiver-avatar {
+    font-size: 18px;
+    width: 32px;
+    height: 32px;
+  }
+
+  .settlement-items-list {
+    padding: 8px;
   }
 }
 

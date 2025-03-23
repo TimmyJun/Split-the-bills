@@ -264,60 +264,140 @@ export class ChartView {
   }
 
   renderSettlementSummary(settlements) {
-    if (!this.container) return
+    if (!this.container) return;
 
     if (!settlements || settlements.length === 0) {
-      this.container.innerHTML = '<div class="no-data-message">尚無需要結算的資料</div>'
-      return
+      this.container.innerHTML = '<div class="no-data-message">尚無需要結算的資料</div>';
+      return;
     }
 
     if (this.chart) {
-      this.chart.destroy()
-      this.chart = null
+      this.chart.destroy();
+      this.chart = null;
     }
 
     if (this.chartCanvas) {
-      this.chartCanvas.style.display = 'none'
+      this.chartCanvas.style.display = 'none';
     }
 
+    // 清除容器內除了canvas之外的元素
     Array.from(this.container.children).forEach(child => {
       if (child !== this.chartCanvas) {
-        this.container.removeChild(child)
+        this.container.removeChild(child);
       }
-    })
+    });
+
+    // 創建結算摘要外層容器（可滾動）
+    const summaryWrapper = document.createElement('div');
+    summaryWrapper.className = 'settlement-wrapper';
 
     // 創建結算摘要容器
-    const summaryContainer = document.createElement('div')
-    summaryContainer.className = 'settlement-summary'
+    const summaryContainer = document.createElement('div');
+    summaryContainer.className = 'settlement-summary';
 
     // 添加標題
-    const title = document.createElement('h3')
-    title.className = 'settlement-title'
-    title.textContent = '結算方案'
-    summaryContainer.appendChild(title)
+    const title = document.createElement('h3');
+    title.className = 'settlement-title';
+    title.textContent = '結算方案';
+    summaryContainer.appendChild(title);
 
-    // 添加結算項目
+    // 創建網格布局容器
+    const gridContainer = document.createElement('div');
+    gridContainer.className = 'settlement-grid';
+
+    // 按債權人分組結算（誰收錢）
+    const settlementsByReceiver = {};
+
     settlements.forEach(settlement => {
-      const item = document.createElement('div')
-      item.className = 'settlement-item'
+      if (!settlementsByReceiver[settlement.to]) {
+        settlementsByReceiver[settlement.to] = {
+          toName: settlement.toName,
+          toAvatar: settlement.toAvatar,
+          items: []
+        };
+      }
 
-      item.innerHTML = `
-        <div class="settlement-avatars">
-          <span class="avatar">${settlement.fromAvatar}</span>
-          <span class="arrow">→</span>
-          <span class="avatar">${settlement.toAvatar}</span>
+      settlementsByReceiver[settlement.to].items.push({
+        from: settlement.from,
+        fromName: settlement.fromName,
+        fromAvatar: settlement.fromAvatar,
+        amount: settlement.amount,
+        transactionTitle: settlement.transactionTitle || ''
+      });
+    });
+
+    // 為每個接收者創建一個分組卡片
+    Object.keys(settlementsByReceiver).forEach(receiverId => {
+      const group = settlementsByReceiver[receiverId];
+
+      // 創建接收者分組卡片
+      const groupCard = document.createElement('div');
+      groupCard.className = 'settlement-group-card';
+
+      // 添加接收者標題
+      const groupHeader = document.createElement('div');
+      groupHeader.className = 'group-header';
+      groupHeader.innerHTML = `
+      <span class="receiver-avatar avatar">${group.toAvatar}</span>
+      <span class="receiver-name">${group.toName} 將收到</span>
+    `;
+      groupCard.appendChild(groupHeader);
+
+      // 創建支付項目列表
+      const itemsList = document.createElement('div');
+      itemsList.className = 'settlement-items-list';
+
+      // 添加每個支付項目
+      group.items.forEach(item => {
+        const paymentItem = document.createElement('div');
+        paymentItem.className = 'payment-item';
+
+        paymentItem.innerHTML = `
+        <div class="payer-info">
+          <span class="payer-avatar avatar">${item.fromAvatar}</span>
+          <span class="payer-name">${item.fromName}</span>
         </div>
-        <div class="settlement-names">
-          <span class="from-name">${settlement.fromName}</span>
-          <span class="to-name">支付給 ${settlement.toName}</span>
-        </div>
-        <div class="settlement-amount">$${settlement.amount.toFixed(2)}</div>
+        <div class="payment-arrow">→</div>
+        <div class="payment-amount">$${item.amount.toFixed(2)}</div>
       `;
 
-      summaryContainer.appendChild(item)
-    })
+        itemsList.appendChild(paymentItem);
+      });
 
-    this.container.appendChild(summaryContainer)
+      // 計算總額
+      const totalAmount = group.items.reduce((sum, item) => sum + item.amount, 0);
+
+      // 添加總額摘要
+      const totalSummary = document.createElement('div');
+      totalSummary.className = 'group-total';
+      totalSummary.innerHTML = `總計: $${totalAmount.toFixed(2)}`;
+
+      // 組裝分組卡片
+      groupCard.appendChild(itemsList);
+      groupCard.appendChild(totalSummary);
+
+      // 添加到網格容器
+      gridContainer.appendChild(groupCard);
+    });
+
+    // 組裝結構
+    summaryContainer.appendChild(gridContainer);
+    summaryWrapper.appendChild(summaryContainer);
+    this.container.appendChild(summaryWrapper);
+
+    // 如果結算項目過多，添加提示文字
+    if (settlements.length > 6) {
+      const scrollHint = document.createElement('div');
+      scrollHint.className = 'scroll-hint';
+      scrollHint.textContent = '向下滾動查看更多';
+      summaryContainer.insertBefore(scrollHint, gridContainer);
+
+      // 5秒後淡出提示
+      setTimeout(() => {
+        scrollHint.classList.add('fade-out');
+        setTimeout(() => scrollHint.remove(), 500);
+      }, 5000);
+    }
   }
 
   generateColorArray(count) {

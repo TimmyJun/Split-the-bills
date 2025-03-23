@@ -203,8 +203,11 @@ export class TransactionDetailDialog {
     if (memberItem) {
       if (isPaid) {
         memberItem.classList.add('paid');
+        // 添加視覺過渡效果
+        memberItem.classList.add('payment-confirmed-animation');
       } else {
         memberItem.classList.remove('paid');
+        memberItem.classList.remove('payment-confirmed-animation');
       }
 
       const button = memberItem.querySelector('.payment-toggle-btn');
@@ -222,6 +225,17 @@ export class TransactionDetailDialog {
 
     // 更新摘要資訊
     this.updatePaymentSummary();
+
+    // 視覺提示確認已保存
+    const confirmationMsg = document.createElement('div');
+    confirmationMsg.className = 'payment-confirmation-message';
+    confirmationMsg.textContent = isPaid ? 'Payment confirmed!' : 'Payment unconfirmed';
+    this.dialog.appendChild(confirmationMsg);
+
+    setTimeout(() => {
+      confirmationMsg.classList.add('fade-out');
+      setTimeout(() => confirmationMsg.remove(), 300);
+    }, 1500);
   }
 
   // 更新付款摘要資訊

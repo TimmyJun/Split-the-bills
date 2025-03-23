@@ -163,13 +163,19 @@ export class AppController {
     this.projectManager.saveProjects()
 
     // 如果會員詳情對話框當前正在顯示，需要更新它
-    if (this.memberDetailDialog.dialog.open && this.memberDetailDialog.currentMemberId) {
-      const member = currentProject.getMemberById(this.memberDetailDialog.currentMemberId)
-      if(member) {
-        const stats = currentProject.calculateMemberStats(this.memberDetailDialog.currentMemberId)
-        this.memberDetailDialog.showMemberDetail(member, stats)
+    if (this.memberDetailDialog.dialog.open) {
+      const openMemberId = this.memberDetailDialog.currentMemberId
+      if (openMemberId) {
+        // 重新計算並更新當前開啟的成員詳情
+        const member = currentProject.getMemberById(openMemberId)
+        if (member) {
+          const updatedStats = currentProject.calculateMemberStats(openMemberId)
+          this.memberDetailDialog.showMemberDetail(member, updatedStats)
+        }
       }
     }
+
+    this.updateOpenMemberDetailDialog()
     
     this.updateUI()
   }
@@ -573,6 +579,8 @@ export class AppController {
 
     // 更新 UI
     this.updateUI()
+    this.updateOpenMemberDetailDialog()
+
 
     setTimeout(() => {
       const newTransactionElement = document.querySelector(`.expense-row[data-transaction-id="${transaction.id}"]`)
@@ -609,6 +617,8 @@ export class AppController {
 
     // 保存項目變更
     this.projectManager.saveProjects()
+
+    this.updateOpenMemberDetailDialog()
 
     // 更新 UI
     this.updateUI()
@@ -664,7 +674,9 @@ export class AppController {
     transaction.participants = data.participants || []
 
     // 保存項目變更
-    this.projectManager.saveProjects();
+    this.projectManager.saveProjects()
+
+    this.updateOpenMemberDetailDialog()
 
     // 更新 UI
     this.updateUI();
@@ -725,6 +737,23 @@ export class AppController {
       this.chartView.switchChartType(this.currentChartType, chartData)
     }catch(error) {
       console.error('Error updating chart view:', error)
+    }
+  }
+
+  updateOpenMemberDetailDialog() {
+    // 檢查是否有開啟的成員詳情對話框
+    if (this.memberDetailDialog.dialog.open && this.memberDetailDialog.currentMemberId) {
+      const currentProject = this.projectManager.currentProject;
+      if (!currentProject) return;
+
+      const memberId = this.memberDetailDialog.currentMemberId;
+      const member = currentProject.getMemberById(memberId);
+
+      if (member) {
+        // 重新計算成員統計並更新對話框
+        const updatedStats = currentProject.calculateMemberStats(memberId);
+        this.memberDetailDialog.updateMemberDetail(member, updatedStats);
+      }
     }
   }
 
