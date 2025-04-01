@@ -8,68 +8,156 @@
 /* Base */
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  background-color: #F5F3FF;
-  color: #1F2937;
-  line-height: 1.5;
+  background-color: #F8FAFC;
+  color: #1E293B;
+  line-height: 1.6;
 }
 
 /* Layout */
 .app-wrapper {
-  min-height: 100vh;
+  height: 100vh;
+  padding: 2rem 0;
+  position: relative;
+  background: rgba(248, 250, 252, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .container {
-  max-width: 800px;
+  max-width: 1000px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 0 1.5rem;
+  position: relative;
+}
+
+/* Sections */
+.project-section,
+.members-section,
+.transactions-section,
+.chart-section {
+  flex: 0 0 auto;
+}
+
+.project-section {
+  margin-bottom: 0;
+}
+
+.members-section {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.members-section .card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.member-list {
+  list-style: none;
+  margin-bottom: 2rem;
+}
+
+.transactions-section {
+  flex: 2;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.transactions-section .card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.expense-list {
+  margin-bottom: 1.5rem;
+}
+
+.chart-section {
+  flex: 1;
+  min-height: 0;
+}
+
+.chart-section .card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.chart-wrapper {
+  aspect-ratio: 1;
+  max-width: 400px;
+  margin: 1.5rem auto;
 }
 
 /* Common Components */
 .card {
   background: white;
-  border-radius: 8px;
-  padding: 20px;
-  margin-bottom: 20px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  border: 1px solid #E2E8F0;
+  transition: all 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }
 
 .btn {
-  background-color: #7C3AED;
+  background-color: #2563EB;
   color: white;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.2s;
-  padding: 6px 12px;
-  font-size: 14px;
+  transition: all 0.2s ease;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
 }
 
 .btn:hover {
-  background-color: #6D28D9;
+  background-color: #1D4ED8;
+  transform: translateY(-1px);
+}
+
+.btn:active {
+  transform: translateY(0);
 }
 
 .input-field {
   width: 100%;
-  padding: 10px;
-  border: 1px solid #A78BFA;
-  border-radius: 6px;
-  font-size: 14px;
+  padding: 0.75rem 1rem;
+  border: 2px solid #E2E8F0;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
 }
 
 .input-field:focus {
   outline: none;
-  border-color: #7C3AED;
-  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+  border-color: #2563EB;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
 .input-field.error {
-  border-color: #DC2626;
+  border-color: #EF4444;
   background-color: #FEF2F2;
 }
 
 .input-field.error:focus {
-  border-color: #DC2626;
-  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+  border-color: #EF4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
 }
 
 /* Header */
@@ -77,25 +165,25 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 2rem;
 }
 
 .app-title {
-  color: #5B21B6;
-  font-size: 24px;
-  font-weight: 600;
+  color: #1E293B;
+  font-size: 1.875rem;
+  font-weight: 700;
 }
 
 /* project section */
 .project-header {
   display: flex;
   align-items: center;
-  margin-bottom: 15px;
+  margin-bottom: 1.25rem;
 }
 
 .project-title {
-  color: #5B21B6;
-  font-size: 24px;
+  color: #1E293B;
+  font-size: 1.5rem;
   font-weight: 600;
   margin: 0;
   flex-grow: 1;
@@ -105,19 +193,20 @@ body {
 }
 
 .project-badge {
-  background-color: #5cde1d;
+  background-color: #64748B;
   color: white;
-  padding: 4px 8px;
-  border-radius: 12px;
-  font-size: 12px;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
   font-weight: 500;
-  margin-left: 10px;
+  margin-left: 1rem;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .project-info {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 12px;
+  gap: 1rem;
 }
 
 .info-item {
@@ -126,76 +215,70 @@ body {
 }
 
 .info-label {
-  font-size: 12px;
-  color: #6D28D9;
+  font-size: 0.75rem;
+  color: #64748B;
   font-weight: 500;
-  margin-bottom: 4px;
+  margin-bottom: 0.25rem;
 }
 
 .info-value {
-  font-size: 14px;
-  color: #4B5563;
+  font-size: 0.875rem;
+  color: #1E293B;
 }
 
 .project-description {
   grid-column: span 2;
   font-style: italic;
+  color: #64748B;
 }
 
 /* Members Area */
 .section-title {
-  color: #5B21B6;
-  font-size: 18px;
+  color: #1E293B;
+  font-size: 1.25rem;
   font-weight: 600;
-  margin-bottom: 15px;
-}
-
-.member-list {
-  list-style: none;
-  margin-bottom: 30px;
+  margin-bottom: 1.25rem;
 }
 
 .add-member-group {
   display: flex;
-  gap: 10px;
-  margin-top: 20px;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
 }
 
 /* transactions */
-.expense-list {
-  margin-bottom: 20px;
-}
-
 .expense-row {
   display: flex;
   align-items: center;
-  padding: 10px;
-  background-color: #EDE9FE;
-  border-radius: 6px;
-  margin-bottom: 10px;
-  gap: 10px;
+  padding: 1rem;
+  background-color: #F8FAFC;
+  border-radius: 12px;
+  margin-bottom: 0.75rem;
+  gap: 1rem;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: all 0.2s ease;
+  border: 1px solid #E2E8F0;
 }
 
 .expense-row:hover {
-  background-color: rgba(124, 58, 237, 0.05);
+  background-color: #F1F5F9;
+  transform: translateX(4px);
 }
 
 .expense-edit-form {
-  background-color: #F3E8FF;
-  border-radius: 6px;
-  margin-bottom: 10px;
-  padding: 15px;
+  background-color: #F8FAFC;
+  border-radius: 12px;
+  margin-bottom: 0.75rem;
+  padding: 1.25rem;
   display: grid;
   grid-template-columns: 2fr 1fr 1fr 1fr;
-  gap: 10px;
-  box-shadow: 0 0 0 2px #A78BFA;
+  gap: 0.75rem;
+  border: 2px solid #E2E8F0;
 }
 
 .edit-custom-category-container {
   grid-column: 1 / -1;
-  margin-bottom: 10px;
+  margin-bottom: 0.75rem;
 }
 
 .edit-payer {
@@ -205,7 +288,7 @@ body {
 .edit-actions {
   grid-column: 3 / -1;
   display: flex;
-  gap: 10px;
+  gap: 0.75rem;
   justify-content: flex-end;
   align-items: center;
 }
@@ -213,7 +296,7 @@ body {
 .expense-info {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 0.75rem;
   min-width: 0;
   flex: 1;
 }
@@ -221,14 +304,14 @@ body {
 .expense-content {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 0.25rem;
   flex: 1;
 }
 
 .expense-actions {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 0.75rem;
   margin-left: auto;
 }
 
@@ -243,55 +326,48 @@ body {
 
 .payer {
   width: 100px;
-  /* 基礎寬度 */
   flex-shrink: 0;
-  /* 不要縮小 */
 }
 
 .expense-name {
-  font-size: 16px;
+  font-size: 1rem;
+  font-weight: 500;
 }
 
 .transaction-date {
-  font-size: 14px;
-  color: #6D28D9;
+  font-size: 0.875rem;
+  color: #64748B;
 }
 
 .add-expense-group {
   display: grid;
   grid-template-columns: 2fr 1fr 1fr 1fr 1fr auto;
-  gap: 10px;
-  margin-top: 20px;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
 }
 
 .transaction-category {
   display: inline-block;
-  background-color: #A78BFA;
-  color: white;
-  font-size: 12px;
-  padding: 2px 6px;
-  border-radius: 10px;
-  margin-left: 5px;
+  background-color: #E2E8F0;
+  color: #1E293B;
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 9999px;
+  margin-left: 0.25rem;
 }
 
 .custom-category-container {
   grid-column: 1 / -1;
-  /* 跨越所有欄位 */
-  margin-top: 5px;
+  margin-top: 0.25rem;
 }
 
 /* Chart Area */
-.chart-wrapper {
-  aspect-ratio: 1;
-  max-width: 400px;
-  margin: 20px auto;
-}
-
 .chart-placeholder {
   width: 100%;
   height: 100%;
-  background-color: #EDE9FE;
-  border-radius: 50%;
+  background-color: #F8FAFC;
+  border-radius: 16px;
+  border: 1px solid #E2E8F0;
 }
 
 .transactions-section .add-expense-group {
@@ -302,7 +378,7 @@ body {
   grid-column: 1 / -1;
   width: 100%;
   max-width: 200px;
-  margin: 10px auto 0 auto;
+  margin: 0.75rem auto 0 auto;
   display: block;
 }
 
@@ -310,10 +386,10 @@ body {
   position: relative;
   width: 60px;
   height: 20px;
-  background-color: #f0f0f0;
+  background-color: #F1F5F9;
   border-radius: 10px;
   overflow: hidden;
-  margin: 0 10px;
+  margin: 0 0.75rem;
 }
 
 .payment-progress-bar {
@@ -321,7 +397,7 @@ body {
   top: 0;
   left: 0;
   height: 100%;
-  background-color: #4CAF50;
+  background-color: #10B981;
   transition: width 0.3s ease;
 }
 
@@ -334,14 +410,14 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 11px;
-  color: #333;
+  font-size: 0.75rem;
+  color: #1E293B;
   z-index: 1;
 }
 
 @media (max-width: 840px) {
   .container {
-    padding: 15px;
+    padding: 1rem;
   }
 }
 
@@ -349,11 +425,11 @@ body {
 @media (max-width: 768px) {
   .container {
     max-width: 100%;
-    padding: 15px;
+    padding: 1rem;
   }
 
   .card {
-    padding: 15px;
+    padding: 1.25rem;
   }
 
   .chart-wrapper {
@@ -387,19 +463,19 @@ body {
   .main-header {
     flex-direction: column;
     align-items: flex-start;
-    gap: 10px;
+    gap: 0.75rem;
   }
 
   .app-title {
-    font-size: 22px;
+    font-size: 1.5rem;
   }
 
   .section-title {
-    font-size: 16px;
+    font-size: 1.125rem;
   }
 
   .card {
-    padding: 12px;
+    padding: 1rem;
   }
 
   .project-info {
@@ -424,14 +500,14 @@ body {
     flex-direction: column;
     align-items: center;
     text-align: center;
-    border-radius: 10px;
-    padding: 12px;
+    border-radius: 12px;
+    padding: 1rem;
     margin: 0 auto;
     position: relative;
-    flex: 0 0 calc(100% - 40px);
-    width: calc(100% - 40px);
+    flex: 0 0 calc(100% - 2rem);
+    width: calc(100% - 2rem);
     max-width: none;
-    min-width: calc(100% - 40px);
+    min-width: calc(100% - 2rem);
     box-sizing: border-box;
   }
 
@@ -440,14 +516,14 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-bottom: 8px;
+    margin-bottom: 0.5rem;
   }
 
   .expense-name {
-    font-size: 16px;
+    font-size: 1rem;
     font-weight: 500;
-    margin-bottom: 4px;
-    padding: 0 5px;
+    margin-bottom: 0.25rem;
+    padding: 0 0.25rem;
     display: flex;
     flex-direction: column;
   }
@@ -456,8 +532,8 @@ body {
     display: flex;
     overflow-x: auto;
     scroll-snap-type: x mandatory;
-    gap: 10px;
-    padding: 5px 12px;
+    gap: 0.75rem;
+    padding: 0.25rem 0.75rem;
     scroll-padding: 0;
     width: 100%;
     -webkit-overflow-scrolling: touch;
@@ -472,46 +548,46 @@ body {
   .scroll-indicator {
     display: flex;
     justify-content: center;
-    gap: 6px;
-    margin: 10px 0;
+    gap: 0.375rem;
+    margin: 0.75rem 0;
   }
 
   .scroll-dot {
-    width: 8px;
-    height: 8px;
+    width: 0.5rem;
+    height: 0.5rem;
     border-radius: 50%;
-    background-color: #DDD1FB;
+    background-color: #E2E8F0;
     transition: background-color 0.3s;
   }
 
   .scroll-dot.active {
-    background-color: #7C3AED;
+    background-color: #2563EB;
   }
 
   .transaction-category {
-    font-size: 11px;
-    padding: 2px 8px;
-    margin: 0 0 6px 0;
+    font-size: 0.75rem;
+    padding: 0.125rem 0.5rem;
+    margin: 0 0 0.375rem 0;
   }
 
   .amount {
-    font-size: 20px;
+    font-size: 1.25rem;
     font-weight: 600;
-    color: #1F2937;
+    color: #1E293B;
     display: block;
     width: 100%;
   }
 
   .expense-info .avatar {
-    font-size: 28px;
-    width: 46px;
-    height: 46px;
+    font-size: 1.75rem;
+    width: 2.875rem;
+    height: 2.875rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: rgba(124, 58, 237, 0.1);
+    background-color: #F1F5F9;
     border-radius: 50%;
-    margin-bottom: 8px;
+    margin-bottom: 0.5rem;
   }
 
   .expense-actions {
@@ -519,19 +595,19 @@ body {
     margin-top: auto;
     display: flex;
     justify-content: center;
-    gap: 15px;
-    padding-top: 10px;
-    border-top: 1px solid rgba(124, 58, 237, 0.1);
+    gap: 1rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid #E2E8F0;
   }
 
   .expense-actions .btn {
-    min-width: 80px;
-    padding: 5px 12px;
+    min-width: 5rem;
+    padding: 0.375rem 0.75rem;
   }
 
   .transaction-date {
-    font-size: 13px;
-    margin-bottom: 8px;
+    font-size: 0.875rem;
+    margin-bottom: 0.5rem;
   }
 
   .expense-content {
@@ -544,8 +620,8 @@ body {
   .expense-edit-form {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    padding: 15px;
+    gap: 0.75rem;
+    padding: 1rem;
     align-items: center;
     width: 100%;
     flex: 0 0 100%;
@@ -560,14 +636,14 @@ body {
   .payer {
     width: auto;
     font-weight: 500;
-    margin-bottom: 5px;
-    font-size: 16px;
+    margin-bottom: 0.25rem;
+    font-size: 1rem;
   }
 
   .add-expense-group {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 0.75rem;
   }
 
   .custom-category-container {
@@ -583,20 +659,20 @@ body {
 /* 超小螢幕設備 (375px 及以下) */
 @media (max-width: 375px) {
   .app-title {
-    font-size: 20px;
+    font-size: 1.25rem;
   }
 
   .card {
-    padding: 10px;
-    margin-bottom: 15px;
+    padding: 0.875rem;
+    margin-bottom: 1rem;
   }
 
   .btn {
-    padding: 5px 10px;
-    font-size: 13px;
+    padding: 0.375rem 0.75rem;
+    font-size: 0.875rem;
   }
 
   .input-field {
-    padding: 8px;
+    padding: 0.625rem;
   }
 }
